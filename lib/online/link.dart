@@ -32,7 +32,8 @@ class Peer {
   final bool flutter;
   final int? form; // v4: formation index advertised in presence ('f'), null for older builds
   final int? pv; // v4: protocol/physics version advertised in presence ('pv'); null = Flutter v1-v3 or RN/Godot
-  const Peer(this.name, this.flutter, [this.form, this.pv]);
+  final String? team; // v4: locally selected team id advertised in presence ('tm'), no server ownership needed
+  const Peer(this.name, this.flutter, [this.form, this.pv, this.team]);
 }
 
 class RoomLink extends ChangeNotifier {
@@ -63,7 +64,28 @@ class RoomLink extends ChangeNotifier {
   /// Persian "please update" message to show (see protoCheck in netcode.dart).
   String? get protoBlock => protoCheck(me: me, online: {for (final e in online.entries) e.key: (e.value.flutter, e.value.pv)});
 
+  /// v4: the team a member plays with = the id they advertise in presence ('tm'), else null (use disc_id).
+  String? teamFor(String uid) => uid == me ? Store.i.p.team : online[uid]?.team;
+
+  /// re-advertise presence (team / formation changed while in the room)
+  Future<void> retrack() async {
+    try {
+      await _ch?.track({'name': myName, 'c': 'fl', 'v': 2, 'f': Store.i.p.form, 'pv': kProtoVersion, 'tm': Store.i.p.team});
+    } catch (_) {}
+  }
+
+  String _adv = '';
+  void _onStore() {
+    final k = '${Store.i.p.team}/${Store.i.p.form}';
+    if (k != _adv && connected) {
+      _adv = k;
+      retrack();
+    }
+  }
+
   RoomLink(this.id, this.me, this.myName) {
+    _adv = '${Store.i.p.team}/${Store.i.p.form}';
+    Store.i.addListener(_onStore);
     _connect();
     refresh();
     _poll = Timer.periodic(const Duration(seconds: 12), (_) => refresh());
@@ -127,7 +149,7 @@ class RoomLink extends ChangeNotifier {
           final on = <String, Peer>{};
           for (final s in ps) {
             final pl = s.presences.isNotEmpty ? s.presences.first.payload : const <String, dynamic>{};
-            on[s.key] = Peer(pl['name']?.toString() ?? '', pl['c'] == 'fl', pl['f'] is num ? (pl['f'] as num).toInt() : null, pl['pv'] is num ? (pl['pv'] as num).toInt() : null);
+            on[s.key] = Peer(pl['name']?.toString() ?? '', pl['c'] == 'fl', pl['f'] is num ? (pl['f'] as num).toInt() : null, pl['pv'] is num ? (pl['pv'] as num).toInt() : null, pl['tm'] is String ? pl['tm'] as String : null);
           }
           for (final k in on.keys) {
             if (!_seen.contains(k)) {
@@ -151,7 +173,7 @@ class RoomLink extends ChangeNotifier {
             connected = true;
             notifyListeners();
             try {
-              await ch.track({'name': myName, 'c': 'fl', 'v': 2, 'f': Store.i.p.form, 'pv': kProtoVersion});
+              await ch.track({'name': myName, 'c': 'fl', 'v': 2, 'f': Store.i.p.form, 'pv': kProtoVersion, 'tm': Store.i.p.team});
             } catch (_) {}
             refresh();
             if (_wasConnected) {
@@ -257,6 +279,7 @@ class RoomLink extends ChangeNotifier {
   @override
   void dispose() {
     _dead = true;
+    Store.i.removeListener(_onStore);
     _soon?.cancel();
     _poll?.cancel();
     _beat?.cancel();

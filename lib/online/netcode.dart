@@ -231,6 +231,7 @@ class NetMatch {
   (int, double, double, double, double)? _pred; // predicted shot: n, ux, uy, v, p
   Float64List? _prev;
   Map<String, dynamic>? result;
+  List<String>? teamIds; // host: captains' team ids, broadcast as 's.tm' (v4)
   int desyncs = 0, corrections = 0, resets = 0;
   int _shotSeqSeen = -1;
 
@@ -341,6 +342,7 @@ class NetMatch {
       'ml': (eng.mleft * 10).round() / 10, 'tl': (eng.tleft * 10).round() / 10, 'su': eng.sudden ? 1 : 0, 'c': ctrl, 'n': seq,
       'p': p, 'R': [for (final v in eng.ball.R) (v * 1000).round()], 'ev': List.of(_evs), 'lk': 1,
       'pf': eng.cfg.profile, 'pv': kProtoVersion,
+      if (teamIds != null) 'tm': teamIds,
     };
     _evs.clear();
     if (!moving && atRest(eng)) {

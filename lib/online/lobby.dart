@@ -173,7 +173,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                           ),
                           for (var i = 0; i < n; i++)
                             seats[t][i] != null
-                                ? _Seat(p: seats[t][i]!, me: me, host: room.s('host'), online: link.online.containsKey(seats[t][i]!.s('user_id')), talking: speaking.contains(seats[t][i]!.s('user_id')),
+                                ? _Seat(p: seats[t][i]!, team: link.teamFor(seats[t][i]!.s('user_id')), me: me, host: room.s('host'), online: link.online.containsKey(seats[t][i]!.s('user_id')), talking: speaking.contains(seats[t][i]!.s('user_id')),
                                     color: t == 0 ? C.cyan : C.red, canKick: isHost && seats[t][i]!.s('user_id') != me && !playing,
                                     onKick: () => run('kick', () async => rpc('kick', {'p_room': room.s('id'), 'p_user': seats[t][i]!.s('user_id')}), 'بازیکن اخراج شد'))
                                 : Press(
@@ -312,21 +312,22 @@ class _LobbyScreenState extends State<LobbyScreen> {
 class _Seat extends StatelessWidget {
   final Rec p;
   final String me, host;
+  final String? team; // v4: presence-advertised team (local selection), wins over the server disc
   final bool online, talking, canKick;
   final Color color;
   final VoidCallback onKick;
-  const _Seat({required this.p, required this.me, required this.host, required this.online, required this.talking, required this.color, required this.canKick, required this.onKick});
+  const _Seat({required this.p, this.team, required this.me, required this.host, required this.online, required this.talking, required this.color, required this.canKick, required this.onKick});
   @override
   Widget build(BuildContext context) {
     final isHost = p.s('user_id') == host, pr = p.rec('profiles');
-    final st = Discs.i.stats(p.str('disc_id') ?? pr.str('equipped_disc'));
+    final st = Discs.i.stats(team ?? p.str('disc_id') ?? pr.str('equipped_disc'));
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(color: const Color(0xd10a0e28), borderRadius: BorderRadius.circular(14), border: Border.all(color: talking ? C.green : p.s('user_id') == me ? color : C.line)),
       child: Row(textDirection: TextDirection.rtl, children: [
         Stack(children: [
-          Avatar(avatar: pr.str('equipped_disc') ?? pr.str('avatar'), url: pr.str('avatar_url'), size: 40, ring: talking ? C.green : color, dim: !online),
+          Avatar(avatar: team ?? pr.str('equipped_disc') ?? pr.str('avatar'), url: team != null ? null : pr.str('avatar_url'), size: 40, ring: talking ? C.green : color, dim: !online),
           Positioned(bottom: 0, left: 0, child: Container(width: 10, height: 10, decoration: BoxDecoration(shape: BoxShape.circle, color: online ? C.green : C.dim2, border: Border.all(color: C.bg, width: 1.5)))),
         ]),
         const SizedBox(width: 6),

@@ -103,7 +103,7 @@ class _DiscsState extends State<_Discs> {
       Store.i.set((q) => q.team = ft.id);
       buzz('success');
       toast('${ft.name} انتخاب شد', 'ok');
-      if (Auth.i.uid != null) dz.equip(ft.id).then((r) => r.$1 ? null : toast(r.$2!, 'err'));
+      if (Auth.i.uid != null) dz.equip(ft.id); // soft: local selection always wins (kUnlockAllShop)
       return;
     }
     final (cost, gemsCur) = teamCost(ft);

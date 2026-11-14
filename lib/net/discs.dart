@@ -111,11 +111,17 @@ class Discs extends ChangeNotifier {
     }
   }
 
+  /// Server-side equip. With kUnlockAllShop the selection is LOCAL (Store.p.team, sent to peers in presence 'tm'):
+  /// the server equip RPC is only called for discs the account really owns, and a 'not owned' reply is a soft
+  /// failure (the local selection stays) - the server would otherwise reject every unlocked-for-testing disc.
   Future<(bool, String?)> equip(String id) async {
+    final serverOwned = isFree(id) || owned.contains(id);
+    if (kUnlockAllShop && (!serverOwned || !catalog.containsKey(id))) return (true, null);
     try {
       await rpc('equip_disc', {'p_disc': id});
       return (true, null);
     } catch (e) {
+      if (kUnlockAllShop || e.toString().toLowerCase().contains('not owned')) return (true, null);
       return (false, errFa(e));
     }
   }

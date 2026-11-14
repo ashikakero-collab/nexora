@@ -95,7 +95,7 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
   late final MatchCfg cfg = () {
     final c = cfgFromRoom(room0);
     Rec? cap(int t) => teamOf(link.players, t).firstOrNull;
-    c.stats = [Discs.i.stats(cap(0) == null ? null : discOf(cap(0)!)), Discs.i.stats(cap(1) == null ? null : discOf(cap(1)!))];
+    c.stats = [Discs.i.stats(_cap(0)), Discs.i.stats(_cap(1))];
     // v4: each team lines up in its captain's formation (advertised in presence 'f'; 0 when unknown/older build).
     // The host's snapshots stay authoritative for positions, so a peer that saw stale presence is corrected.
     int formOf(int t) {
@@ -119,12 +119,19 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
     return meP != null && meP.s('role') == 'player' && (meP.i('team', -1) == 0 || meP.i('team', -1) == 1) ? meP.i('team') : null;
   }();
   late final List<String> names = [_nm(teamOf(link.players, 0), 'آبی'), _nm(teamOf(link.players, 1), 'قرمز')];
-  late final List<Team> teams = [teamOfAvatar(_cap(0)), teamOfAvatar(_cap(1))];
-  late final bool ranked = room0.b('ranked');
-  String? _cap(int t) {
+  List<Team> get teams => [teamOfAvatar(_cap(0)), teamOfAvatar(_cap(1))];
+
+  /// v4: captains' team ids. Host: presence 'tm' (local selection, no server ownership needed) else disc_id, fixed
+  /// at match open and broadcast in every snapshot ('tm'); clients adopt the host's list (deterministic stats).
+  List<String>? _hostTm;
+  late final List<String?> _fixedCaps = [_capRaw(0), _capRaw(1)];
+  String? _capRaw(int t) {
     final c = teamOf(link.players, t).firstOrNull;
-    return c == null ? null : discOf(c);
+    if (c == null) return null;
+    return link.teamFor(c.s('user_id')) ?? discOf(c);
   }
+  late final bool ranked = room0.b('ranked');
+  String? _cap(int t) => !isHost && _hostTm != null ? _hostTm![t] : _fixedCaps[t];
 
   String _nm(List<Rec> t, String d) => (t.firstOrNull?.rec('profiles').str('username') ?? d) + (t.length > 1 ? ' +${fa(t.length - 1)}' : '');
   String nameOf(String? uid) => uid == null ? 'ربات' : link.players.where((p) => p.s('user_id') == uid).firstOrNull?.rec('profiles').s('username', '…') ?? '…';
@@ -190,6 +197,8 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
           widget.onExit('version');
           return;
         }
+        final ss = m['k'] == 's' && m['s'] is Map ? m['s'] as Map : null;
+        if (ss != null && ss['tm'] is List && (ss['tm'] as List).length == 2) _hostTm = [for (final x in ss['tm'] as List) x.toString()];
         final p = msgProfile(m);
         if (p == null) {
           if (_early.length < 40) _early.add((m, from));
@@ -208,6 +217,7 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
   void _setProfile(String p) {
     if (pf != null) return;
     pf = p;
+    if (isHost) net.teamIds = [_cap(0) ?? 'club0', _cap(1) ?? 'club0'];
     _pfWait?.cancel();
     final now = DateTime.now().millisecondsSinceEpoch;
     net.lastRecv = now;
