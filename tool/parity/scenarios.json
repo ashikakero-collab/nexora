@@ -1,0 +1,14 @@
+[
+  {"name":"basic_pitch","field":0,"forms":[0,0],"ball":0,"ai":false,"aiLvl":1,"limit":3,"matchTime":0,"turnTime":15,"first":0,"stats":null,"vip":[false,false],
+   "dt":[0.0166667],"frames":900,"shots":[{"f":5,"b":4,"dx":0,"dy":-200},{"f":300,"b":0,"dx":40,"dy":160},{"f":600,"b":2,"dx":-60,"dy":-120}]},
+  {"name":"vip_forest_vardt","field":1,"forms":[2,5],"ball":3,"ai":false,"aiLvl":1,"limit":3,"matchTime":0,"turnTime":0,"first":1,"stats":null,"vip":[true,false],
+   "dt":[0.0166667,0.011,0.022,0.0083,0.033,0.07],"frames":1200,"shots":[{"f":3,"b":0,"dx":10,"dy":210},{"f":400,"b":4,"dx":-5,"dy":-300},{"f":800,"b":1,"dx":120,"dy":120}]},
+  {"name":"stats_human_dev","field":15,"forms":[3,1],"ball":7,"ai":false,"aiLvl":1,"limit":5,"matchTime":180,"turnTime":10,"first":0,"stats":[[9,3],[2,8]],"vip":[false,false],
+   "dt":[0.0166667,0.0125],"frames":1500,"human":true,"shots":[{"f":10,"b":4,"dx":3,"dy":-220},{"f":500,"b":2,"dx":-30,"dy":150},{"f":1000,"b":0,"dx":0,"dy":-210}]},
+  {"name":"ai_vs_ai_l0","field":7,"forms":[1,4],"ball":2,"ai":true,"aiTeam0":true,"aiLvl":0,"limit":3,"matchTime":0,"turnTime":15,"first":0,"stats":null,"vip":[false,false],
+   "dt":[0.0166667],"frames":7200,"shots":[]},
+  {"name":"ai_vs_ai_l2_timed","field":27,"forms":[5,0],"ball":11,"ai":true,"aiTeam0":true,"aiLvl":2,"limit":99,"matchTime":120,"turnTime":15,"first":1,"stats":[[5,5],[7,6]],"vip":[false,false],
+   "dt":[0.0166667,0.02],"frames":9000,"shots":[]},
+  {"name":"ai_vs_ai_l1_ice","field":2,"forms":[0,3],"ball":5,"ai":true,"aiTeam0":true,"aiLvl":1,"limit":3,"matchTime":0,"turnTime":20,"first":0,"stats":null,"vip":[false,true],
+   "dt":[0.0166667],"frames":9000,"shots":[]}
+]

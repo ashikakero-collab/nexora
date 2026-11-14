@@ -1,0 +1,14 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - tool/**
+    - android/**
+
+linter:
+  rules:
+    # The engine/renderer are line-for-line ports of the TypeScript sources and keep their identifiers
+    # (PR, BR, LMAX, CX, DEPTH, ...) so the two can be diffed side by side.
+    constant_identifier_names: false
+    non_constant_identifier_names: false

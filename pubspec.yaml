@@ -1,0 +1,58 @@
+name: nexora
+description: "NEXORA finger soccer: Flutter + Flame port."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.14.0
+
+dependencies:
+  audioplayers: ^6.8.1
+  flame: ^1.38.2
+  flutter:
+    sdk: flutter
+  image_picker: ^1.2.4
+  livekit_client: ^2.13.2
+  material_ui: ^1.1.0
+  permission_handler: ^13.0.2
+  shared_preferences: ^2.5.6
+  supabase_flutter: ^2.18.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  shaders:
+    - shaders/ball.frag
+    - shaders/intro_warp.frag
+    - shaders/intro_planet.frag
+    - shaders/intro_post.frag
+  assets:
+    - assets/g/arrow/
+    - assets/g/balls/
+    - assets/g/fields/
+    - assets/g/fthumb/
+    - assets/g/goals/
+    - assets/g/kit/
+    - assets/g/menu/
+    - assets/g/oracle/
+    - assets/g/sfx/
+    - assets/g/teams/
+    - assets/g/ui/
+    - assets/g/ui2/
+  fonts:
+    - family: Orbitron
+      fonts:
+        - asset: assets/fonts/Orbitron-VF.ttf
+    - family: Exo2
+      fonts:
+        - asset: assets/fonts/Exo2-VF.ttf
+    - family: Vazirmatn
+      fonts:
+        - asset: assets/fonts/Vazirmatn-VF.ttf
+    - family: Oxanium
+      fonts:
+        - asset: assets/fonts/Oxanium-VF.ttf
