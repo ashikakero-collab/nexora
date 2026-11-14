@@ -18,7 +18,7 @@ if (hasReleaseKey) {
 
 android {
     namespace = "com.nexora.nexora"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = maxOf(37, flutter.compileSdkVersion)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
