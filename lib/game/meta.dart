@@ -5,6 +5,7 @@ import '../core/assets.dart';
 import '../core/owned.dart';
 import '../core/store.dart';
 import 'data.dart';
+import 'goal_skins.dart';
 
 class Ach {
   final String id, name, desc, icon;
@@ -26,7 +27,7 @@ final kAchs = <Ach>[
 
 const kDaily = [(100, 0), (150, 0), (250, 0), (300, 0), (400, 0), (450, 0), (800, 0)];
 
-enum ItemKind { team, ball, field }
+enum ItemKind { team, ball, field, goal }
 
 class Item {
   final ItemKind kind;
@@ -50,6 +51,13 @@ List<Item> allItems(Profile p, {bool all = false}) {
   for (var i = 0; i < kFields.length; i++) {
     if (fieldPrice(i) > 0 && (all || !ownsField(i))) out.add(Item(ItemKind.field, '$i', kFields[i].name, fieldPrice(i), fieldThumb(i), fieldPrice(i) > 140 ? 2 : 1));
   }
+  // v4 goal skins: shop catalogue only (deals / chests keep their round/portrait item cards)
+  if (all) {
+    for (var i = 0; i < kGoalSkins.length; i++) {
+      final g = kGoalSkins[i];
+      out.add(Item(ItemKind.goal, '$i', g.name, g.price, g.img, g.rar));
+    }
+  }
   return out;
 }
 
@@ -61,6 +69,8 @@ void grant(Item it, Profile q) {
       q.ownedBalls = [...q.ownedBalls, it.idx];
     case ItemKind.field:
       q.ownedFields = [...q.ownedFields, it.idx];
+    case ItemKind.goal:
+      q.ownedGoals = [...q.ownedGoals, it.idx];
   }
 }
 

@@ -121,6 +121,33 @@ int stateHash(Engine e) {
 
 const kNetProfiles = {'stars', 'godot', 'classic'};
 
+/// v4 protocol / physics version, advertised in presence as 'pv' (link.dart) and in host snapshots as 's.pv'.
+/// Flutter builds v1-v3 advertise c:'fl' without 'pv' (treated as 3): their 'stars' tuning, linear power and
+/// smooth stop differ from v4, so a mixed match would desync -> v3 and v4 clients must not share a match.
+/// RN / Godot peers (no c:'fl') keep playing the legacy 'classic' profile as before.
+const int kProtoVersion = 4;
+const kMsgUpdateMe = 'نسخه‌ی NEXORA روی گوشی تو قدیمی است. لطفاً برنامه را به‌روز کن تا بتوانی با این بازیکن‌ها بازی کنی.';
+const kMsgUpdateThem = 'یکی از بازیکنان نسخه‌ی قدیمی NEXORA دارد. لطفاً از او بخواه برنامه را به‌روز کند؛ تا آن موقع بازی شروع نمی‌شود.';
+
+/// null when compatible; otherwise the message to show. [online] = presence uid -> (advertises c:'fl', pv).
+String? protoCheck({required String me, required Map<String, (bool, int?)> online, int mine = kProtoVersion}) {
+  var older = false, newer = false;
+  for (final e in online.entries) {
+    if (e.key == me || !e.value.$1) continue;
+    final pv = e.value.$2 ?? 3;
+    if (pv < mine) older = true;
+    if (pv > mine) newer = true;
+  }
+  return newer ? kMsgUpdateMe : older ? kMsgUpdateThem : null;
+}
+
+/// Client side: a host snapshot from a Flutter host (it carries 'pf') must also carry our 'pv'.
+String? snapProtoCheck(Map s, {int mine = kProtoVersion}) {
+  if (s['pf'] == null) return null; // RN / Godot host: legacy classic path
+  final pv = s['pv'] is num ? (s['pv'] as num).toInt() : 3;
+  return pv > mine ? kMsgUpdateMe : pv < mine ? kMsgUpdateThem : null;
+}
+
 /// Host-side choice: 'stars' only when every other member is online with the Flutter capability flag.
 /// [members] = every room member uid (players + spectators); [online] = presence uid -> advertises c:'fl'.
 String pickProfile({required String me, required Iterable<String> members, required Map<String, bool> online}) {
@@ -313,7 +340,7 @@ class NetMatch {
       'q': ++_q, 'ts': now, 'hz': hz, 'ph': eng.phase.name, 'tu': eng.turn, 'sc': [eng.score[0], eng.score[1]],
       'ml': (eng.mleft * 10).round() / 10, 'tl': (eng.tleft * 10).round() / 10, 'su': eng.sudden ? 1 : 0, 'c': ctrl, 'n': seq,
       'p': p, 'R': [for (final v in eng.ball.R) (v * 1000).round()], 'ev': List.of(_evs), 'lk': 1,
-      'pf': eng.cfg.profile,
+      'pf': eng.cfg.profile, 'pv': kProtoVersion,
     };
     _evs.clear();
     if (!moving && atRest(eng)) {

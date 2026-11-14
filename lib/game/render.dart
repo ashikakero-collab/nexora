@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 
 import 'data.dart';
 import 'engine.dart';
+import 'goal_skins.dart';
 
 class MatchView {
   final double W, H, s, ox, oy;
@@ -81,7 +82,12 @@ Future<ui.Image> proceduralBall([int size = 256]) {
 class MatchImages {
   final ui.Image field, ball, t0, t1;
   final ui.Image? headE, headS, shaftE, shaftS;
-  MatchImages(this.field, this.ball, this.t0, this.t1, this.headE, this.headS, this.shaftE, this.shaftS);
+
+  /// v4 goal skin + its honeycomb net texture (null = classic procedural mesh)
+  final GoalSkin skin;
+  final ui.Image? net;
+  MatchImages(this.field, this.ball, this.t0, this.t1, this.headE, this.headS, this.shaftE, this.shaftS, {GoalSkin? skin, this.net})
+      : skin = skin ?? kGoalSkins[0];
   bool get hasArrow => headE != null && headS != null && shaftE != null && shaftS != null;
 }
 
@@ -273,6 +279,7 @@ class MatchRenderer {
     c.translate(v.ox + shx, v.oy + shy);
     c.scale(v.s);
     final al = e.alpha();
+    _netFx(t, al);
     _drawNets(c, t);
     _drawBodies(c, t, al);
     _drawTrail(c);
@@ -492,10 +499,64 @@ class MatchRenderer {
   }
 
   // ---- goals ----
+  // v4 net ripple (render-only, ~0.8 s decay): fired on a goal (rising edge of the engine's ripple) and whenever the
+  // ball bounces off the net inside a goal (back wall / side walls). Hits are detected from the ball's interpolated
+  // frame-to-frame motion, so it works offline, on the host and on interpolating online clients. Collision untouched.
+  static const double _ripDur = .8;
+  final Float64List _rip = Float64List(2), _ripX = Float64List(2), _ripK = Float64List(2), _shk = Float64List(2);
+  final Float64List _lastER = Float64List(2), _cool = Float64List(2);
+  double _lt = -1, _lbx = 0, _lby = 0, _lvx = 0, _lvy = 0;
+
+  void _kick(int i, double x, double k) {
+    if (_rip[i] * _ripK[i] <= k) {
+      _rip[i] = 1;
+      _ripX[i] = x;
+      _ripK[i] = k;
+    }
+    _shk[i] = math.max(_shk[i], .3 * k);
+    _cool[i] = .22;
+  }
+
+  void _netFx(double t, double al) {
+    final dt = _lt < 0 ? 0.0 : (t - _lt).clamp(0.0, .1).toDouble();
+    _lt = t;
+    for (var i = 0; i < 2; i++) {
+      _rip[i] = math.max(0, _rip[i] - dt / _ripDur);
+      _shk[i] = math.max(0, _shk[i] - dt * 1.4);
+      _cool[i] = math.max(0, _cool[i] - dt);
+      final er = e.ripple[i];
+      if (er > _lastER[i] + .3) _kick(i, e.rippleX[i], 1);
+      _lastER[i] = er;
+    }
+    final b = e.ball;
+    final bx = b.px + (b.x - b.px) * al, by = b.py + (b.y - b.py) * al;
+    if (dt > 0) {
+      final vx = (bx - _lbx) / dt, vy = (by - _lby) / dt;
+      final moved = (bx - _lbx).abs() + (by - _lby).abs() > .01; // skip frames where the sim did not advance
+      if (moved) {
+        for (var i = 0; i < 2; i++) {
+          if (_cool[i] > 0) continue;
+          final g = e.goals[i];
+          final dep = (by - g.y) * g.d; // depth into the goal mouth
+          if (dep <= b.r * .5 || bx < g.x1 - b.r || bx > g.x2 + b.r) continue;
+          final back = dep > e.DEPTH - b.r - 8 && _lvy * g.d > 40 && vy * g.d < _lvy * g.d * .4;
+          final side = (bx < g.x1 + b.r + 8 && _lvx < -40 && vx > _lvx * .4) || (bx > g.x2 - b.r - 8 && _lvx > 40 && vx < _lvx * .4);
+          if (back || side) _kick(i, bx, (math.sqrt(_lvx * _lvx + _lvy * _lvy) / 700).clamp(.3, 1.0).toDouble());
+        }
+        _lvx = vx;
+        _lvy = vy;
+      }
+    }
+    _lbx = bx;
+    _lby = by;
+  }
+
+  bool _netAnim(int i) => _rip[i] > 0 || e.shake[i] > 0 || _shk[i] > 0;
+  double _shakeX(int i, double t) => math.sin(t * 40) * 6 * math.max(e.shake[i], _shk[i]);
+
   void _drawNets(ui.Canvas c, double t) {
     for (var i = 0; i < 2; i++) {
-      final animating = e.ripple[i] > 0 || e.shake[i] > 0;
-      if (!animating) {
+      if (!_netAnim(i)) {
         _nets[i] ??= () {
           final rec = ui.PictureRecorder();
           _netInto(ui.Canvas(rec), i, t, false);
@@ -511,18 +572,45 @@ class MatchRenderer {
   // v4 goals with HEIGHT: a top-down camera above the centre spot sees raised parts lean outward, so the crossbar,
   // the back bar and the post tops are drawn lifted by [_goalH] along the goal's outward direction (render only; the
   // collision geometry of e.goals is untouched). Posts cast shadows on the grass, the net has a floor, side walls,
-  // a back wall and a raised roof.
+  // a back wall and a raised roof. With a skin, the roof + back wall carry the skin's honeycomb net texture
+  // (drawVertices over a 12x6 grid so the ripple bends the texture) and the frame uses the skin's palette.
   static const double _goalH = 30;
   ui.Offset _lift(double x, double y, double d, double h) => ui.Offset(x + (x - e.CX) * h * .0022, y + d * h);
+
+  static const int _nu = 12, _nv = 6;
+  final Float32List _vPos = Float32List((_nu + 1) * (_nv + 3) * 2), _vTex = Float32List((_nu + 1) * (_nv + 3) * 2);
+  late final Uint16List _vIdx = () {
+    final out = <int>[];
+    void quads(int base, int rows) {
+      for (var j = 0; j < rows; j++) {
+        for (var k = 0; k < _nu; k++) {
+          final a = base + j * (_nu + 1) + k, b = a + 1, c2 = a + _nu + 1, d2 = c2 + 1;
+          out.addAll([a, b, d2, a, d2, c2]);
+        }
+      }
+    }
+
+    quads(0, _nv); // roof rows 0.._nv
+    quads((_nu + 1) * (_nv + 1), 1); // back wall: 2 rows
+    return Uint16List.fromList(out);
+  }();
+  ui.Paint? _netTexP;
+  late final List<ui.Color> _pal = [for (final v in im.skin.pal) ui.Color(v)];
+  late final ui.Color _netCol = ui.Color(im.skin.netCol);
+
+  double _bulge(double x, double k, double t, int i, bool anim) {
+    if (!anim || _rip[i] <= 0) return 0;
+    final rp = _rip[i], dx = x - _ripX[i], sig = 55 + (1 - rp) * 80;
+    return e.goals[i].d * rp * 17 * _ripK[i] * k * math.exp(-(dx * dx) / (sig * sig)) * (.62 + .38 * math.sin(t * 24 - dx.abs() / 14));
+  }
 
   void _netInto(ui.Canvas c, int i, double t, bool anim) {
     final g = e.goals[i];
     final d = g.d.toDouble(), x1 = g.x1 - POST_R, x2 = g.x2 + POST_R, D = e.DEPTH + 6, y0 = g.y, yb = g.y + d * D;
     final inset = (x2 - x1) * .045, bx1 = x1 + inset, bx2 = x2 - inset;
-    final sx = anim ? math.sin(t * 40) * 6 * e.shake[i] : 0.0;
-    final rp = anim ? e.ripple[i] : 0.0, rx = e.rippleX[i];
+    final sx = anim ? _shakeX(i, t) : 0.0;
     const H = _goalH, HB = _goalH * .82;
-    double bulge(double x, double k) => rp > 0 ? d * rp * 16 * k * math.exp(-math.pow((x - rx) / 70, 2)) * (1 + .35 * math.sin(t * 22)) : 0;
+    final tex = im.net;
     c.save();
     c.translate(sx, 0);
     // floor
@@ -547,11 +635,11 @@ class MatchRenderer {
     // raised outline points
     final f1 = _lift(x1, y0, d, H), f2 = _lift(x2, y0, d, H), r1 = _lift(bx1, yb, d, HB), r2 = _lift(bx2, yb, d, HB);
     // side walls + back wall (translucent panels)
-    _fill.color = const ui.Color(0x1fffffff);
+    _fill.color = tex == null ? const ui.Color(0x1fffffff) : _netCol.withValues(alpha: .10);
     for (final q in [
       [ui.Offset(x1, y0), f1, r1, ui.Offset(bx1, yb)],
       [ui.Offset(x2, y0), f2, r2, ui.Offset(bx2, yb)],
-      [ui.Offset(bx1, yb), r1, r2, ui.Offset(bx2, yb)],
+      if (tex == null) [ui.Offset(bx1, yb), r1, r2, ui.Offset(bx2, yb)],
     ]) {
       _path
         ..reset()
@@ -560,12 +648,14 @@ class MatchRenderer {
     }
     _netP
       ..strokeWidth = 1.1
-      ..color = const ui.Color(0x38ffffff);
-    // back-wall verticals
-    final nb = math.max(6, ((bx2 - bx1) / 22).round());
-    for (var k = 0; k <= nb; k++) {
-      final u = k / nb, gx = bx1 + (bx2 - bx1) * u;
-      c.drawLine(ui.Offset(gx, yb), ui.Offset.lerp(r1, r2, u)!, _netP);
+      ..color = tex == null ? const ui.Color(0x38ffffff) : _netCol.withValues(alpha: .55);
+    if (tex == null) {
+      // back-wall verticals
+      final nb = math.max(6, ((bx2 - bx1) / 22).round());
+      for (var k = 0; k <= nb; k++) {
+        final u = k / nb, gx = bx1 + (bx2 - bx1) * u;
+        c.drawLine(ui.Offset(gx, yb), ui.Offset.lerp(r1, r2, u)!, _netP);
+      }
     }
     // side-wall diagonals
     for (var j = 1; j < 6; j++) {
@@ -573,58 +663,91 @@ class MatchRenderer {
       c.drawLine(ui.Offset(x1 + (bx1 - x1) * vv, y0 + (yb - y0) * vv), ui.Offset.lerp(f1, r1, vv)!, _netP);
       c.drawLine(ui.Offset(x2 + (bx2 - x2) * vv, y0 + (yb - y0) * vv), ui.Offset.lerp(f2, r2, vv)!, _netP);
     }
-    // raised roof mesh
-    final n = math.max(8, ((x2 - x1) / 18).round());
-    _netP
-      ..strokeWidth = 1.3
-      ..color = const ui.Color(0x4dffffff);
-    for (var k = 0; k <= n; k++) {
-      final u = k / n, fa = ui.Offset.lerp(f1, f2, u)!, ra = ui.Offset.lerp(r1, r2, u)!;
-      _path
-        ..reset()
-        ..moveTo(fa.dx, fa.dy);
-      for (var j = 1; j <= 6; j++) {
-        final vv = j / 6, p = ui.Offset.lerp(fa, ra, vv)!;
-        _path.lineTo(p.dx, p.dy + bulge(p.dx, math.sin(vv * math.pi)));
+    if (tex != null) {
+      // textured roof (rows 0.._nv: front -> back) + back wall (2 rows: ground back line -> raised back bar)
+      final tw = tex.width.toDouble(), k = tw / (x2 - x1);
+      var o = 0;
+      for (var j = 0; j <= _nv; j++) {
+        final vv = j / _nv;
+        for (var q = 0; q <= _nu; q++) {
+          final u = q / _nu, fa = ui.Offset.lerp(f1, f2, u)!, ra = ui.Offset.lerp(r1, r2, u)!, p = ui.Offset.lerp(fa, ra, vv)!;
+          _vPos[o] = p.dx;
+          _vPos[o + 1] = p.dy + _bulge(p.dx, math.sin(vv * math.pi), t, i, anim);
+          _vTex[o] = u * tw;
+          _vTex[o + 1] = vv * D * k;
+          o += 2;
+        }
       }
-      c.drawPath(_path, _netP);
-    }
-    for (var j = 1; j <= 7; j++) {
-      final vv = math.pow(j / 7, .85).toDouble(), pa = ui.Offset.lerp(f1, r1, vv)!, pb = ui.Offset.lerp(f2, r2, vv)!;
-      _path
-        ..reset()
-        ..moveTo(pa.dx, pa.dy);
-      for (var k = 1; k <= 12; k++) {
-        final p = ui.Offset.lerp(pa, pb, k / 12)!;
-        _path.lineTo(p.dx, p.dy + bulge(p.dx, math.sin(vv * math.pi)));
+      for (var j = 0; j <= 1; j++) {
+        for (var q = 0; q <= _nu; q++) {
+          final u = q / _nu, p = j == 0 ? ui.Offset(bx1 + (bx2 - bx1) * u, yb) : ui.Offset.lerp(r1, r2, u)!;
+          _vPos[o] = p.dx;
+          _vPos[o + 1] = p.dy + (j == 1 ? _bulge(p.dx, .35, t, i, anim) : 0);
+          _vTex[o] = u * tw;
+          _vTex[o + 1] = j * HB * k;
+          o += 2;
+        }
       }
-      c.drawPath(_path, _netP);
+      _netTexP ??= ui.Paint()
+        ..filterQuality = ui.FilterQuality.medium
+        ..shader = ui.ImageShader(tex, ui.TileMode.repeated, ui.TileMode.repeated, Float64List.fromList(const [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]));
+      c.drawVertices(ui.Vertices.raw(ui.VertexMode.triangles, _vPos, textureCoordinates: _vTex, indices: _vIdx), ui.BlendMode.srcOver, _netTexP!);
+    } else {
+      // raised roof mesh
+      final n = math.max(8, ((x2 - x1) / 18).round());
+      _netP
+        ..strokeWidth = 1.3
+        ..color = const ui.Color(0x4dffffff);
+      for (var k = 0; k <= n; k++) {
+        final u = k / n, fa = ui.Offset.lerp(f1, f2, u)!, ra = ui.Offset.lerp(r1, r2, u)!;
+        _path
+          ..reset()
+          ..moveTo(fa.dx, fa.dy);
+        for (var j = 1; j <= 6; j++) {
+          final vv = j / 6, p = ui.Offset.lerp(fa, ra, vv)!;
+          _path.lineTo(p.dx, p.dy + _bulge(p.dx, math.sin(vv * math.pi), t, i, anim));
+        }
+        c.drawPath(_path, _netP);
+      }
+      for (var j = 1; j <= 7; j++) {
+        final vv = math.pow(j / 7, .85).toDouble(), pa = ui.Offset.lerp(f1, r1, vv)!, pb = ui.Offset.lerp(f2, r2, vv)!;
+        _path
+          ..reset()
+          ..moveTo(pa.dx, pa.dy);
+        for (var k = 1; k <= 12; k++) {
+          final p = ui.Offset.lerp(pa, pb, k / 12)!;
+          _path.lineTo(p.dx, p.dy + _bulge(p.dx, math.sin(vv * math.pi), t, i, anim));
+        }
+        c.drawPath(_path, _netP);
+      }
     }
-    // roof edges + back bar (raised) and the ground back line
+    // roof edges + back bar (raised) and the ground back line, in the skin's frame colours
     _netP
       ..strokeWidth = 3
-      ..color = const ui.Color(0x8cffffff);
+      ..color = tex == null ? const ui.Color(0x8cffffff) : _pal[2].withValues(alpha: .85);
     c.drawLine(f1, r1, _netP);
     c.drawLine(f2, r2, _netP);
     _netP
       ..strokeWidth = 2
-      ..color = const ui.Color(0x59ffffff);
+      ..color = tex == null ? const ui.Color(0x59ffffff) : _pal[2].withValues(alpha: .6);
     c.drawLine(ui.Offset(bx1, yb), ui.Offset(bx2, yb), _netP);
     c.drawLine(ui.Offset(bx1, yb), r1, _netP);
     c.drawLine(ui.Offset(bx2, yb), r2, _netP);
+    final rb = _bulge((bx1 + bx2) / 2, .25, t, i, anim);
     _netP
       ..strokeWidth = 4.5
-      ..color = const ui.Color(0xbfe8edf5);
-    c.drawLine(r1, r2, _netP);
+      ..color = tex == null ? const ui.Color(0xbfe8edf5) : _pal[1].withValues(alpha: .9);
+    c.drawLine(r1.translate(0, rb * .3), r2.translate(0, rb * .3), _netP);
     c.restore();
   }
 
   void _drawFrames(ui.Canvas c, double t) {
     const W = POST_R * 1.7, H = _goalH;
+    final pal = _pal;
     for (var i = 0; i < 2; i++) {
       final g = e.goals[i];
       final d = g.d.toDouble();
-      final sx = math.sin(t * 40) * 6 * e.shake[i], y = g.y, x1 = g.x1 + sx, x2 = g.x2 + sx;
+      final sx = _shakeX(i, t), y = g.y, x1 = g.x1 + sx, x2 = g.x2 + sx;
       final t1 = _lift(x1, y, d, H), t2 = _lift(x2, y, d, H);
       // contact shadow at the post bases
       _fill.color = const ui.Color(0x66000000);
@@ -634,23 +757,21 @@ class MatchRenderer {
       for (final (b0, tp) in [(ui.Offset(x1, y), t1), (ui.Offset(x2, y), t2)]) {
         _bar
           ..strokeWidth = W
-          ..shader = ui.Gradient.linear(ui.Offset(b0.dx - W / 2, 0), ui.Offset(b0.dx + W / 2, 0),
-              const [ui.Color(0xff7a8292), ui.Color(0xffffffff), ui.Color(0xffd9dee7), ui.Color(0xff596173)], const [0, .3, .62, 1]);
+          ..shader = ui.Gradient.linear(ui.Offset(b0.dx - W / 2, 0), ui.Offset(b0.dx + W / 2, 0), pal, const [0, .3, .62, 1]);
         c.drawLine(b0, tp, _bar);
-        _fill.shader = ui.Gradient.radial(b0.translate(-POST_R * .3, -POST_R * .3), POST_R * 1.2, const [ui.Color(0xffd0d6df), ui.Color(0xff8e96a6), ui.Color(0xff4a5162)], const [0, .55, 1]);
+        _fill.shader = ui.Gradient.radial(b0.translate(-POST_R * .3, -POST_R * .3), POST_R * 1.2, [pal[2], pal[0], pal[3]], const [0, .55, 1]);
         c.drawCircle(b0, POST_R, _fill);
       }
       // crossbar (raised), with a bright highlight line on its upper edge
-      _bar.shader = ui.Gradient.linear(ui.Offset(0, t1.dy - W / 2), ui.Offset(0, t1.dy + W / 2),
-          const [ui.Color(0xff8d96a6), ui.Color(0xffffffff), ui.Color(0xffdfe5ee), ui.Color(0xff6c7484)], const [0, .35, .6, 1]);
+      _bar.shader = ui.Gradient.linear(ui.Offset(0, t1.dy - W / 2), ui.Offset(0, t1.dy + W / 2), pal, const [0, .35, .6, 1]);
       c.drawLine(t1, t2, _bar);
       _bar
         ..shader = null
         ..strokeWidth = 1.6
-        ..color = const ui.Color(0xe6ffffff);
+        ..color = ui.Color.lerp(pal[1], const ui.Color(0xffffffff), .5)!.withValues(alpha: .9);
       c.drawLine(t1.translate(0, -W * .22), t2.translate(0, -W * .22), _bar);
       for (final tp in [t1, t2]) {
-        _fill.shader = ui.Gradient.radial(tp.translate(-POST_R * .35, -POST_R * .4), POST_R * 1.25, const [ui.Color(0xffffffff), ui.Color(0xffd5dbe5), ui.Color(0xff5d6575)], const [0, .5, 1]);
+        _fill.shader = ui.Gradient.radial(tp.translate(-POST_R * .35, -POST_R * .4), POST_R * 1.25, [ui.Color.lerp(pal[1], const ui.Color(0xffffffff), .4)!, pal[2], pal[3]], const [0, .5, 1]);
         c.drawCircle(tp, POST_R + 1, _fill);
       }
       _fill.shader = null;

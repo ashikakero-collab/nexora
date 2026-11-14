@@ -114,11 +114,12 @@ class _LobbyScreenState extends State<LobbyScreen> {
         final full = seats[0].every((x) => x != null) && seats[1].every((x) => x != null);
         final notReady = link.players.where((p) => p.s('role') == 'player' && !p.b('ready') && p.s('user_id') != room.s('host')).toList();
         final playing = room.s('status') == 'playing';
-        final canStart = isHost && full && notReady.isEmpty && room.s('status') == 'waiting';
+        final block = link.protoBlock; // v4: protocol version mismatch -> no start
+        final canStart = isHost && full && notReady.isEmpty && room.s('status') == 'waiting' && block == null;
         final kind = room.s('kind', 'casual');
-        _checkAuto((kind == 'quick' || kind == 'arena') && room.s('status') == 'waiting' && full && notReady.isEmpty, isHost);
+        _checkAuto((kind == 'quick' || kind == 'arena') && room.s('status') == 'waiting' && full && notReady.isEmpty && block == null, isHost);
         final speaking = link.voice.speaking.toSet();
-        final reason = !full ? 'منتظر پر شدن جایگاه‌ها…' : notReady.isNotEmpty ? 'منتظر آماده شدن ${fa(notReady.length)} بازیکن…' : '';
+        final reason = block ?? (!full ? 'منتظر پر شدن جایگاه‌ها…' : notReady.isNotEmpty ? 'منتظر آماده شدن ${fa(notReady.length)} بازیکن…' : '');
         final ins = MediaQuery.paddingOf(context);
         return Scaffold(
           backgroundColor: C.bg,
@@ -128,6 +129,15 @@ class _LobbyScreenState extends State<LobbyScreen> {
               Header(title: room.s('name'), en: 'LOBBY · ${room.s('mode').toUpperCase()}', onBack: widget.onLeave, right: PingBadge(link: link)),
               Expanded(
                 child: ListView(padding: const EdgeInsets.fromLTRB(16, 0, 16, 150), children: [
+                  if (block != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Panel(accent: C.red, child: Row(textDirection: TextDirection.rtl, children: [
+                        const Icon(Icons.system_update, color: C.red, size: 26),
+                        const SizedBox(width: 10),
+                        Expanded(child: T(block, size: 12, color: Colors.white, align: TextAlign.right)),
+                      ])),
+                    ),
                   Panel(
                     accent: C.cyan,
                     child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [

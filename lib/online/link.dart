@@ -7,6 +7,7 @@
 //  - presence (key = user id)                   -> who is connected right now
 // Additive (Flutter): presence payload carries {c: 'fl', v: 2} so a Flutter host knows every peer understands
 // the low-bandwidth lockstep protocol; RN peers simply ignore the extra keys.
+// v4 adds 'pv' (protocol/physics version, kProtoVersion): Flutter peers with another pv can't share a match.
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -16,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/sound.dart';
 import '../core/store.dart';
 import '../net/supabase.dart';
+import 'netcode.dart' show kProtoVersion, protoCheck;
 import 'voice.dart';
 
 class ChatMsg {
@@ -29,7 +31,8 @@ class Peer {
   final String name;
   final bool flutter;
   final int? form; // v4: formation index advertised in presence ('f'), null for older builds
-  const Peer(this.name, this.flutter, [this.form]);
+  final int? pv; // v4: protocol/physics version advertised in presence ('pv'); null = Flutter v1-v3 or RN/Godot
+  const Peer(this.name, this.flutter, [this.form, this.pv]);
 }
 
 class RoomLink extends ChangeNotifier {
@@ -55,6 +58,10 @@ class RoomLink extends ChangeNotifier {
 
   // traffic counters for the debug overlay
   int sentMsgs = 0, recvMsgs = 0, sentBytes = 0;
+
+  /// v4 handshake guard: null when every Flutter peer in the room runs this protocol version, else the
+  /// Persian "please update" message to show (see protoCheck in netcode.dart).
+  String? get protoBlock => protoCheck(me: me, online: {for (final e in online.entries) e.key: (e.value.flutter, e.value.pv)});
 
   RoomLink(this.id, this.me, this.myName) {
     _connect();
@@ -120,7 +127,7 @@ class RoomLink extends ChangeNotifier {
           final on = <String, Peer>{};
           for (final s in ps) {
             final pl = s.presences.isNotEmpty ? s.presences.first.payload : const <String, dynamic>{};
-            on[s.key] = Peer(pl['name']?.toString() ?? '', pl['c'] == 'fl', pl['f'] is num ? (pl['f'] as num).toInt() : null);
+            on[s.key] = Peer(pl['name']?.toString() ?? '', pl['c'] == 'fl', pl['f'] is num ? (pl['f'] as num).toInt() : null, pl['pv'] is num ? (pl['pv'] as num).toInt() : null);
           }
           for (final k in on.keys) {
             if (!_seen.contains(k)) {
@@ -144,7 +151,7 @@ class RoomLink extends ChangeNotifier {
             connected = true;
             notifyListeners();
             try {
-              await ch.track({'name': myName, 'c': 'fl', 'v': 2, 'f': Store.i.p.form});
+              await ch.track({'name': myName, 'c': 'fl', 'v': 2, 'f': Store.i.p.form, 'pv': kProtoVersion});
             } catch (_) {}
             refresh();
             if (_wasConnected) {

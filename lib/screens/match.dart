@@ -13,6 +13,7 @@ import '../core/theme.dart';
 import '../game/data.dart';
 import '../game/engine.dart';
 import '../game/game.dart';
+import '../game/goal_skins.dart';
 import '../game/render.dart';
 import '../oracle/oracle.dart';
 import '../ui/kit.dart';
@@ -49,7 +50,15 @@ Future<MatchImages> loadMatchImages(MatchCfg cfg, Team t0, Team t1) async {
     loadImage(kARROW_IMG['shaft_e']!),
     loadImage(kARROW_IMG['shaft_s']!),
   ]);
-  return MatchImages(r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7]);
+  // v4 goal skin (cosmetic, local): the honeycomb net texture of the chosen skin; classic = procedural mesh
+  final skin = goalSkin(Store.i.p.goal);
+  ui.Image? net;
+  if (skin.net != null) {
+    try {
+      net = await loadImage(skin.net!);
+    } catch (_) {}
+  }
+  return MatchImages(r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], skin: net == null ? kGoalSkins[0] : skin, net: net);
 }
 
 class HudState {

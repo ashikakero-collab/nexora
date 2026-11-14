@@ -66,13 +66,16 @@ class _ShopScreenState extends State<ShopScreen> {
 
   String tcat = 'vip';
 
-  bool _owns(Item it) => it.kind == ItemKind.ball ? ownsBall(it.idx) : it.kind == ItemKind.field ? ownsField(it.idx) : ownsTeam(it.id);
+  bool _owns(Item it) => switch (it.kind) { ItemKind.ball => ownsBall(it.idx), ItemKind.field => ownsField(it.idx), ItemKind.goal => ownsGoal(it.idx), ItemKind.team => ownsTeam(it.id) };
+
+  bool _equipped(Item it, Profile p) => switch (it.kind) { ItemKind.ball => p.ball == it.idx, ItemKind.field => p.field == it.idx, ItemKind.goal => p.goal == it.idx, ItemKind.team => p.team == it.id };
 
   void _equip(Item it) {
     Store.i.set((q) {
       if (it.kind == ItemKind.ball) q.ball = it.idx;
       if (it.kind == ItemKind.field) q.field = it.idx;
       if (it.kind == ItemKind.team) q.team = it.id;
+      if (it.kind == ItemKind.goal) q.goal = it.idx;
     });
     buzz('success');
     toast('${it.name} انتخاب شد', 'ok');
@@ -134,7 +137,7 @@ class _ShopScreenState extends State<ShopScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(textDirection: TextDirection.rtl, children: [
-                  for (final (k, icon, label) in [('team', V4.h('shield'), 'دیسک'), ('ball', V4.h('ball'), 'توپ'), ('field', V4.h('stadium'), 'زمین'), ('chest', V4.h('chest'), 'صندوقچه')])
+                  for (final (k, icon, label) in [('team', V4.h('shield'), 'دیسک'), ('ball', V4.h('ball'), 'توپ'), ('field', V4.h('stadium'), 'زمین'), ('goal', V4.h('trophy'), 'دروازه'), ('chest', V4.h('chest'), 'صندوقچه')])
                     Expanded(
                       child: Press(
                         onTap: () => setState(() => kind = k),
@@ -275,7 +278,15 @@ class _ShopScreenState extends State<ShopScreen> {
               ] else ...[
                 _grid(cell, [
                   for (final it in list.take(80))
-                    _Pedestal(onTap: () => _owns(it) ? _equip(it) : buy(it), color: _rc[it.rar], img: it.img, cell: cell, round: it.kind != ItemKind.field, name: it.name, price: _Price(v: it.price)),
+                    _Pedestal(
+                        onTap: () => _owns(it) ? _equip(it) : buy(it),
+                        color: _rc[it.rar],
+                        img: it.img,
+                        cell: cell,
+                        round: it.kind != ItemKind.field && it.kind != ItemKind.goal,
+                        wide: it.kind == ItemKind.goal,
+                        name: _equipped(it, p) ? '● ${it.name}' : it.name,
+                        price: it.price == 0 ? const T('رایگان', size: 10, color: C.green) : _Price(v: it.price)),
                 ]),
                 if (list.isEmpty) const EmptyState('همه‌چیز این بخش رو داری، اسطوره!'),
               ],
@@ -297,10 +308,10 @@ class _Pedestal extends StatelessWidget {
   final Color color;
   final String img, name;
   final double cell;
-  final bool round;
+  final bool round, wide;
   final Widget? extra;
   final Widget price;
-  const _Pedestal({required this.onTap, required this.color, required this.img, required this.cell, required this.round, required this.name, this.extra, required this.price});
+  const _Pedestal({required this.onTap, required this.color, required this.img, required this.cell, required this.round, required this.name, this.extra, required this.price, this.wide = false});
   @override
   Widget build(BuildContext context) => Press(
         onTap: onTap,
@@ -317,7 +328,13 @@ class _Pedestal extends StatelessWidget {
               height: cell * .78,
               child: Stack(alignment: Alignment.bottomCenter, children: [
                 Positioned(bottom: 0, child: Img(menu('pedestal'), w: cell * .9, h: cell * .3, opacity: .9)),
-                Positioned(bottom: cell * .1, child: round ? ClipOval(child: Img(img, w: cell * .6, h: cell * .6)) : Img(img, w: cell * .48, h: cell * .64, fit: BoxFit.cover, radius: 6)),
+                Positioned(
+                    bottom: cell * .1,
+                    child: wide
+                        ? Img(img, w: cell * .9, h: cell * .5, fit: BoxFit.contain)
+                        : round
+                            ? ClipOval(child: Img(img, w: cell * .6, h: cell * .6))
+                            : Img(img, w: cell * .48, h: cell * .64, fit: BoxFit.cover, radius: 6)),
               ]),
             ),
             const SizedBox(height: 4),

@@ -151,6 +151,16 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
     sfx(Snd.whistle);
     Sound.playLoop(Snd.crowd);
     Sound.scene(AudioScene.match);
+    // v4 handshake guard: never share a match with a Flutter peer on another protocol version
+    final block = link.protoBlock;
+    if (block != null) {
+      done = 'aborted';
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _toast(block);
+        if (mounted) widget.onExit('version');
+      });
+      return;
+    }
     if (isHost) {
       _setProfile(pickProfile(
           me: link.me, members: link.players.map((p) => p.s('user_id')), online: {for (final e in link.online.entries) e.key: e.value.flutter}));
@@ -170,7 +180,16 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
         widget.onExit('aborted');
         return;
       }
+      if (done == 'aborted') return;
       if (pf == null) {
+        final sm = m['k'] == 's' && m['s'] is Map ? snapProtoCheck(m['s'] as Map) : null;
+        if (sm != null) {
+          done = 'aborted';
+          _pfWait?.cancel();
+          _toast(sm);
+          widget.onExit('version');
+          return;
+        }
         final p = msgProfile(m);
         if (p == null) {
           if (_early.length < 40) _early.add((m, from));

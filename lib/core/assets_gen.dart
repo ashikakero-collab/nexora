@@ -314,14 +314,15 @@ const Map<String, String> kFIELD_THUMB = {
 };
 
 const Map<String, String> kGOAL_IMG = {
-  'black': 'assets/g/goals/black.webp',
-  'blue': 'assets/g/goals/blue.webp',
-  'gold': 'assets/g/goals/gold.webp',
-  'ice': 'assets/g/goals/ice.webp',
-  'red': 'assets/g/goals/red.webp',
-  'rope': 'assets/g/goals/rope.webp',
-  'white': 'assets/g/goals/white.webp',
-  'wood': 'assets/g/goals/wood.webp',
+  'silver': 'assets/g/goals4/silver.webp',
+  'white': 'assets/g/goals4/white.webp',
+  'black': 'assets/g/goals4/black.webp',
+  'ice': 'assets/g/goals4/ice.webp',
+  'wood': 'assets/g/goals4/wood.webp',
+  'woodhc': 'assets/g/goals4/woodhc.webp',
+  'gold': 'assets/g/goals4/gold.webp',
+  'red': 'assets/g/goals4/red.webp',
+  'blue': 'assets/g/goals4/blue.webp',
 };
 
 const Map<String, String> kUI = {
