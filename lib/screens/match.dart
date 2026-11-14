@@ -16,6 +16,7 @@ import '../game/game.dart';
 import '../game/render.dart';
 import '../oracle/oracle.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
 
 class MatchResult {
   final List<int> score;
@@ -173,7 +174,7 @@ class _MatchScreenState extends State<MatchScreen> {
             sfx(Snd.goal);
             sfx(Snd.roar);
             buzz('heavy');
-            _banner('گل!', widget.names[ev.team], ev.team == 0 ? C.cyan : C.red);
+            _banner('گل!', widget.names[ev.team], ev.team == 0 ? C.cyanOld : C.red);
             if (human(ev.team)) Oracle.i.react('goal');
           }
         case EvType.clock:
@@ -252,22 +253,16 @@ class _MatchScreenState extends State<MatchScreen> {
                 Row(children: [
                   Press(
                     onTap: () => setState(() => paused = true),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(color: const Color(0xd9080c22), borderRadius: BorderRadius.circular(12), border: Border.all(color: C.line)),
-                      child: tTitle('II', size: 14),
-                    ),
+                    child: SizedBox(width: 42, height: 42, child: NeonPanel(radius: 13, padding: EdgeInsets.zero, rimW: 1.3, child: const Center(child: Icon(Icons.pause_rounded, size: 24, color: Color(0xffffc27a))))),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Panel(
                       height: 60,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      accent: h.turn == 0 ? C.cyan : C.red,
+                      accent: h.turn == 0 ? C.cyanOld : C.red,
                       child: Row(children: [
-                        Expanded(child: MatchSide(team: widget.teams[0], name: widget.names[0], on: h.turn == 0, color: C.cyan, sub: 'نوبت توئه')),
+                        Expanded(child: MatchSide(team: widget.teams[0], name: widget.names[0], on: h.turn == 0, color: C.cyanOld, sub: 'نوبت توئه')),
                         Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                           Row(children: [tTitle('${h.s0}', size: 26), tTitle(' : ', size: 26, color: C.dim), tTitle('${h.s1}', size: 26)]),
                           T(h.clock, size: 9, family: F.head, weight: 700, spacing: 2, color: h.sudden ? C.gold : C.dim),
@@ -286,7 +281,7 @@ class _MatchScreenState extends State<MatchScreen> {
                       child: FractionallySizedBox(
                         alignment: h.turn == 0 ? Alignment.centerLeft : Alignment.centerRight,
                         widthFactor: h.tl,
-                        child: DecoratedBox(decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), gradient: LinearGradient(colors: h.turn == 0 ? const [C.cyan, C.blue] : const [C.red, C.orange]))),
+                        child: DecoratedBox(decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), gradient: LinearGradient(colors: h.turn == 0 ? const [C.cyanOld, C.blue] : const [C.red, C.orange]))),
                       ),
                     ),
                   ),

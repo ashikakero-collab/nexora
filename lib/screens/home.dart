@@ -10,9 +10,12 @@ import '../core/theme.dart';
 import '../game/data.dart';
 import '../net/auth.dart';
 import '../net/supabase.dart';
+import '../oracle/avatar.dart';
 import '../oracle/oracle.dart';
+import '../tutorial/keys.dart';
 import '../ui/chrome.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
 
 class World {
   final String key, name, fa, sub, img;
@@ -34,143 +37,140 @@ class HomeScreen extends StatefulWidget {
   final double top, bottom;
   final void Function(String world) onWorld;
   final VoidCallback onQuick, onDaily, onChest;
+  final VoidCallback? onShop, onSocial, onRank, onSettings, onOracle;
   final bool dailyReady, chestReady;
-  const HomeScreen({super.key, required this.top, required this.bottom, required this.onWorld, required this.onQuick, required this.onDaily, required this.onChest, required this.dailyReady, required this.chestReady});
+  const HomeScreen(
+      {super.key,
+      required this.top,
+      required this.bottom,
+      required this.onWorld,
+      required this.onQuick,
+      required this.onDaily,
+      required this.onChest,
+      required this.dailyReady,
+      required this.chestReady,
+      this.onShop,
+      this.onSocial,
+      this.onRank,
+      this.onSettings,
+      this.onOracle});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+/// v4 home (owner mockup): Oracle robot + NEXORA title hero, Quick Match pill, a row of five neon icon tiles
+/// (shop, friends, rank, daily gift, settings), the level/XP card, quick world cards, daily reward, challenges.
 class _HomeScreenState extends State<HomeScreen> {
-  int sel = 2; // Social Station is the hero card in the owner's screenshot
-  double drag = 0;
-  final search = TextEditingController();
-  String q = '';
-
   @override
   Widget build(BuildContext context) {
+    final k = uiK(context);
     final w = MediaQuery.sizeOf(context).width;
-    final world = kWorlds[sel];
     final p = Store.i.p, me = teamById(p.team);
-    final matches = q.isEmpty
-        ? const <World>[]
-        : kWorlds.where((x) => '${x.name} ${x.fa} ${x.sub}'.toLowerCase().contains(q.toLowerCase())).toList();
+    final lv = level(p.xp), lg = league(p.trophies);
+    final heroH = (w * .72).clamp(240.0, 340.0);
+    final tile = ((w - 32) / 5 - 20).clamp(42.0, 64.0); // each tile column is tile + 18 wide (label)
     return ListView(padding: EdgeInsets.only(top: widget.top, bottom: widget.bottom + SP.l), children: [
-      // search worlds, games & features
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: SP.l),
-        child: TextField(
-          controller: search,
-          onChanged: (v) => setState(() => q = v.trim()),
-          style: ts(size: 14, family: isFa(q) ? F.fa : F.body),
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search_rounded, color: C.dim),
-            hintText: Store.i.p.lang == 'fa' ? 'جستجوی دنیاها، بازی‌ها و امکانات' : 'Search worlds, games & features',
-            hintStyle: ts(size: 14, color: C.dim, family: Store.i.p.lang == 'fa' ? F.fa : F.body),
-            filled: true,
-            fillColor: const Color(0x4d1a2456),
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(22), borderSide: const BorderSide(color: Color(0x40a0b4ff))),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(22), borderSide: const BorderSide(color: Color(0x40a0b4ff))),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(22), borderSide: const BorderSide(color: C.cyan)),
+      // hero: planet glow, animated Oracle, NEXORA logo
+      SizedBox(
+        height: heroH,
+        child: Stack(clipBehavior: Clip.none, children: [
+          Positioned(
+            right: -w * .12,
+            top: heroH * .02,
+            width: w * .8,
+            child: Opacity(opacity: .55, child: FloatY(amp: 5, ms: 5200, child: Image.asset(V4.heroPlanet, fit: BoxFit.contain))),
           ),
+          Positioned(
+            left: 4,
+            bottom: 0,
+            child: OracleAvatar(size: math.min(heroH * .9, w * .62), onTap: widget.onOracle),
+          ),
+          Positioned(
+            right: 10,
+            top: heroH * .14,
+            width: w * .44,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              FloatY(amp: 4, ms: 3600, child: NexoraLogo(width: w * .42)),
+              const SizedBox(height: 6),
+              T('FINGER SOCCER', size: 9.5 * k, family: F.head, weight: 700, spacing: 2.2, color: N.amber, align: TextAlign.center, lines: 1),
+              const SizedBox(height: 4),
+              T('سلام ${p.name}! آماده‌ی یک مسابقه‌ای؟', size: 12 * k, color: const Color(0xffdfe6ff), align: TextAlign.center, lines: 2),
+            ]),
+          ),
+        ]),
+      ),
+      // quick match
+      Padding(
+        padding: const EdgeInsets.fromLTRB(SP.l, SP.s, SP.l, 0),
+        child: KeyedSubtree(
+          key: TourKeys.quick,
+          child: NeonButton('بازی سریع', sub: 'QUICK MATCH · ${me.name.toUpperCase()}', iconData: Icons.play_arrow_rounded, pulse: true, onTap: widget.onQuick),
         ),
       ),
-      if (matches.isNotEmpty)
-        Padding(
-          padding: const EdgeInsets.only(top: SP.s),
-          child: Column(children: [
-            for (final m in matches)
-              ListRow(icon: m.img, title: m.fa, sub: m.sub, onTap: () {
-                search.clear();
-                setState(() => q = '');
-                widget.onWorld(m.key);
-              }),
+      // five neon tiles
+      Padding(
+        padding: const EdgeInsets.fromLTRB(SP.l, SP.l, SP.l, 0),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, textDirection: TextDirection.rtl, children: [
+          NeonIconButton(key: TourKeys.shop, icon: V4.ic('bag'), label: 'فروشگاه', size: tile, onTap: widget.onShop ?? () => widget.onWorld('shop')),
+          NeonIconButton(key: TourKeys.social, icon: V4.ic('friends'), label: 'دوستان', size: tile, onTap: widget.onSocial ?? () => widget.onWorld('social')),
+          NeonIconButton(key: TourKeys.rank, icon: V4.ic('trophy'), label: 'رتبه‌ها', size: tile, onTap: widget.onRank ?? () => widget.onWorld('online')),
+          NeonIconButton(key: TourKeys.gift, icon: V4.ic('gift'), label: 'جایزه', size: tile, badge: widget.dailyReady, selected: widget.dailyReady, onTap: widget.onDaily),
+          NeonIconButton(key: TourKeys.settings, icon: V4.ic('gear'), label: 'تنظیمات', size: tile, onTap: widget.onSettings ?? () => toast('به‌زودی')),
+        ]),
+      ),
+      // level / XP card
+      Padding(
+        padding: const EdgeInsets.fromLTRB(SP.l, SP.l, SP.l, 0),
+        child: NeonPanel(
+          key: TourKeys.level,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          child: Row(textDirection: TextDirection.rtl, children: [
+            Container(
+              width: 52,
+              height: 52,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const RadialGradient(colors: [Color(0xff2a1a5a), Color(0xff0a0f30)]),
+                border: Border.all(color: N.orange, width: 2),
+                boxShadow: glow(N.orange, 10, .5),
+              ),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                const T('LV', size: 8, family: F.head, weight: 700, color: N.amber),
+                T('${lv.level}', size: 18, family: F.num, weight: 800, color: Colors.white),
+              ]),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Row(textDirection: TextDirection.rtl, children: [
+                  tBold('سطح ${fa(lv.level)}', size: 14),
+                  const Spacer(),
+                  T('${en(lv.cur)} / ${en(lv.need)} XP', size: 11, family: F.num, weight: 700, color: N.amber),
+                ]),
+                const SizedBox(height: 6),
+                Bar(v: lv.need > 0 ? lv.cur / lv.need : 0, h: 9, color: N.amber, color2: N.orange2),
+                const SizedBox(height: 6),
+                Row(textDirection: TextDirection.rtl, children: [
+                  Img(V4.h('trophy'), w: 20, h: 20),
+                  const SizedBox(width: 4),
+                  T('${fa(p.trophies)} · لیگ ${kLeagueFa[lg.name]}', size: 11, color: C.dim),
+                  const Spacer(),
+                  T('${fa(p.wins)} برد · ${fa(p.played)} بازی', size: 11, color: C.dim),
+                ]),
+              ]),
+            ),
           ]),
         ),
-      // portal world
-      GestureDetector(
-        onHorizontalDragUpdate: (d) => setState(() => drag += d.delta.dx),
-        onHorizontalDragEnd: (d) {
-          final steps = (-drag / 70).round();
-          setState(() {
-            sel = (sel + steps) % kWorlds.length;
-            if (sel < 0) sel += kWorlds.length;
-            drag = 0;
-          });
-        },
-        child: SizedBox(height: w * .92, child: _PortalWorld(sel: sel, drag: drag, onSel: (i) => i == sel ? widget.onWorld(kWorlds[i].key) : setState(() => sel = i))),
       ),
-      // featured world card
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: SP.l),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 260),
-          child: Container(
-            key: ValueKey(sel),
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: world.color.withValues(alpha: .55)),
-              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [const Color(0x99283a7a), world.color.withValues(alpha: .12), const Color(0xcc161c4a)]),
-              boxShadow: glow(world.color, 18, .25),
-            ),
-            child: Row(children: [
-              Img(world.img, w: 52, h: 60),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  T(world.name, size: 20, family: F.title, weight: 900, color: world.color, spacing: 1),
-                  const SizedBox(height: 2),
-                  T(world.fa, size: 13, color: C.text),
-                  T(world.sub, size: 12, color: C.dim),
-                ]),
-              ),
-              Press(
-                onTap: () => widget.onWorld(world.key),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-                  decoration: BoxDecoration(color: world.color, borderRadius: BorderRadius.circular(18), boxShadow: glow(world.color, 14, .5)),
-                  child: T(Store.i.p.lang == 'fa' ? 'ورود' : 'Enter', size: 17, family: F.bold, weight: 800, color: const Color(0xff071028)),
-                ),
-              ),
-            ]),
-          ),
-        ),
-      ),
-      // selected disc hero + quick match
-      const SizedBox(height: SP.l),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: SP.l),
-        child: Press(
-          onTap: widget.onQuick,
-          scaleTo: .96,
-          child: Container(
-            height: 78,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(22), gradient: const LinearGradient(colors: G.primary), border: Border.all(color: const Color(0x66ffffff)), boxShadow: glow(C.cyan, 18, .45)),
-            child: Row(children: [
-              const SizedBox(width: 12),
-              FloatY(amp: 3, child: Disc(teamImg(me), size: 56, ring: Colors.white, ringW: 2)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  tTitle('شروع بازی', size: 22, shadows: const [Shadow(color: Color(0x80000028), blurRadius: 8)]),
-                  tHead('QUICK MATCH · ${me.name.toUpperCase()}', size: 9, color: const Color(0xd9ffffff)),
-                ]),
-              ),
-              Img(menu('ic_play'), w: 44, h: 44),
-              const SizedBox(width: 12),
-            ]),
-          ),
-        ),
-      ),
-      // quick actions
+      // quick world cards
       Padding(
         padding: const EdgeInsets.fromLTRB(SP.m, SP.l, SP.m, 0),
         child: Row(textDirection: TextDirection.rtl, children: [
-          _quick(kit('team'), 'آنلاین', () => widget.onWorld('online')),
-          _quick(kit('cup'), 'جام نکسورا', () => widget.onWorld('cup')),
-          _quick(kit('shield'), 'تیم من', () => widget.onWorld('gallery')),
-          _quick(kit('chest'), 'صندوقچه', widget.onChest, dot: widget.chestReady),
+          _quick(V4.holoBall, 'آنلاین', 'ONLINE', () => widget.onWorld('online')),
+          _quick(V4.h('trophy'), 'جام نکسورا', 'CUP', () => widget.onWorld('cup')),
+          _quick(V4.h('shield'), 'تیم من', 'TEAM', () => widget.onWorld('gallery')),
+          _quick(V4.h('chest'), 'صندوقچه', 'CHEST', widget.onChest, dot: widget.chestReady),
         ]),
       ),
       Section(
@@ -184,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
               accent: widget.dailyReady ? C.gold : Colors.transparent,
               glowOn: widget.dailyReady,
               child: Row(textDirection: TextDirection.rtl, children: [
-                Img(kit('gift'), w: 44, h: 44),
+                Img(V4.h('gift'), w: 46, h: 46),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: SP.m),
@@ -194,11 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ]),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: widget.dailyReady ? C.gold : C.line)),
-                  child: tBold(widget.dailyReady ? 'دریافت' : 'جزئیات', size: 12, color: widget.dailyReady ? C.gold : C.dim),
-                ),
+                SizedBox(width: 92, child: NeonButton(widget.dailyReady ? 'دریافت' : 'جزئیات', small: true, kind: widget.dailyReady ? NeonKind.primary : NeonKind.ghost, onTap: widget.onDaily)),
               ]),
             ),
           ),
@@ -208,18 +204,27 @@ class _HomeScreenState extends State<HomeScreen> {
     ]);
   }
 
-  Widget _quick(String img, String label, VoidCallback on, {bool dot = false}) => Expanded(
+  Widget _quick(String img, String label, String en, VoidCallback on, {bool dot = false}) => Expanded(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: SP.xs),
           child: Press(
             onTap: on,
-            child: Container(
-              height: 88,
-              decoration: BoxDecoration(color: const Color(0xcc0a1030), borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
-              child: Stack(alignment: Alignment.center, children: [
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [Img(img, w: 48, h: 48), const SizedBox(height: 2), tBold(label, size: 11, lines: 1)]),
-                if (dot) Positioned(top: 8, right: 10, child: Container(width: 9, height: 9, decoration: const BoxDecoration(color: C.red, shape: BoxShape.circle))),
-              ]),
+            child: SizedBox(
+              height: 104,
+              child: NeonPanel(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                radius: 18,
+                rim: const [Color(0xaaff8a2a), Color(0x88ff4f9a), Color(0xaa4f7dff)],
+                child: Stack(alignment: Alignment.center, children: [
+                  Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Img(img, w: 54, h: 54),
+                    const SizedBox(height: 2),
+                    tBold(label, size: 11, lines: 1),
+                    T(en, size: 7.5, family: F.head, weight: 700, spacing: 1.5, color: N.amber, lines: 1),
+                  ]),
+                  if (dot) Positioned(top: 2, right: 4, child: Container(width: 9, height: 9, decoration: const BoxDecoration(color: C.red, shape: BoxShape.circle))),
+                ]),
+              ),
             ),
           ),
         ),

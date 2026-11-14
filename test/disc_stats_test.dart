@@ -39,10 +39,19 @@ void main() {
     expect(mid, greaterThan(lo));
   });
 
-  test('power multiplier spans +-25%', () {
-    expect(powerMul(1), closeTo(.75, 1e-9));
-    expect(powerMul(10), closeTo(1.25, 1e-9));
-    expect(kTuneStars.discVmax, greaterThanOrEqualTo(kTuneStars.shotMax * 1.25));
+  test('power is exact and linear: launch(5) / launch(10) = 0.5, launch(8) / launch(10) = 0.8', () {
+    double launch(double pw) {
+      final e = Engine(_cfg([DiscStats(pw, 10), DiscStats.def]), rand: math.Random(1).nextDouble);
+      final b = e.bodies.firstWhere((x) => x.team == 0);
+      e.fire(b, 0, -1e6, 1e6);
+      return math.sqrt(b.vx * b.vx + b.vy * b.vy);
+    }
+
+    final v10 = launch(10), v5 = launch(5), v8 = launch(8), v1 = launch(1);
+    expect(v5 / v10, closeTo(.5, .005));
+    expect(v8 / v10, closeTo(.8, .008));
+    expect(v1, greaterThan(0));
+    expect(v10, closeTo(kTuneStars.discVmax, 1e-6));
   });
 
   test('accuracy reduces deviation', () {

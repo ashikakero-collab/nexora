@@ -446,7 +446,7 @@ const kNavTabs = [
   (NavTab.team, 'Team', 'تیم', Icons.shield_rounded),
   (NavTab.social, 'Social', 'اجتماعی', Icons.groups_rounded),
 ];
-const double kNavH = 78;
+const double kNavH = 80;
 
 /// Glass bottom bar with the centre Play button raised above it. [keys] (optional) receive each tab's GlobalKey for the tutorial.
 class NeonNavBar extends StatelessWidget {
@@ -526,14 +526,14 @@ class NeonNavBar extends StatelessWidget {
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             _GlowPulse(
               child: Container(
-                width: 60,
-                height: 60,
+                width: 56,
+                height: 56,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: const RadialGradient(center: Alignment(-.3, -.4), colors: [Color(0xffffc27a), Color(0xffff7a2a), Color(0xffd8401a)]),
                   border: Border.all(color: const Color(0xfffff0e0), width: 2),
                 ),
-                child: const Icon(Icons.play_arrow_rounded, size: 38, color: Colors.white),
+                child: const Icon(Icons.play_arrow_rounded, size: 36, color: Colors.white),
               ),
             ),
             const SizedBox(height: 1),

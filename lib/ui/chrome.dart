@@ -11,7 +11,9 @@ import '../core/theme.dart';
 import '../game/data.dart';
 import '../net/auth.dart';
 import '../net/supabase.dart';
+import '../tutorial/keys.dart';
 import 'kit.dart';
+import 'v4.dart';
 
 final navKey = GlobalKey<NavigatorState>();
 
@@ -45,7 +47,7 @@ class _Toast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.paddingOf(context).top + 64;
-    final c = k == 'err' ? C.red : k == 'ok' ? C.green : C.cyan;
+    final c = k == 'err' ? C.red : k == 'ok' ? C.green : N.orange;
     return Positioned(
       top: top,
       left: 0,
@@ -60,7 +62,12 @@ class _Toast extends StatelessWidget {
             child: Container(
               constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * .9),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(color: const Color(0xf50a102c), borderRadius: BorderRadius.circular(22), border: Border.all(color: c)),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xf5141b4a), Color(0xf5080d2c)]),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: c, width: 1.3),
+                boxShadow: hq ? [BoxShadow(color: c.withValues(alpha: .35), blurRadius: 14)] : null,
+              ),
               child: Row(mainAxisSize: MainAxisSize.min, textDirection: TextDirection.rtl, children: [
                 Img(k == 'err' ? kit('bell') : k == 'ok' ? kit('star') : kit('mega'), w: 26, h: 26),
                 const SizedBox(width: 6),
@@ -75,15 +82,9 @@ class _Toast extends StatelessWidget {
 }
 
 // ---------------- page transitions ----------------
-Route<T> fadeRoute<T>(Widget page, {bool opaque = true}) => PageRouteBuilder<T>(
-      opaque: opaque,
-      transitionDuration: const Duration(milliseconds: 340),
-      reverseTransitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (_, __, ___) => page,
-      transitionsBuilder: (_, a, __, ch) => FadeTransition(opacity: CurvedAnimation(parent: a, curve: Curves.easeOutCubic), child: ch),
-    );
+Route<T> fadeRoute<T>(Widget page, {bool opaque = true}) => neonRoute<T>(page, opaque: opaque);
 
-Future<T?> push<T>(Widget page) => navKey.currentState!.push<T>(fadeRoute(page));
+Future<T?> push<T>(Widget page) => navKey.currentState!.push<T>(neonRoute(page));
 
 // ---------------- bottom sheet ----------------
 Future<T?> showSheet<T>(BuildContext context, {required String title, String? en, Color accent = C.cyan, double height = .84, required Widget Function(BuildContext) child}) {
@@ -99,19 +100,20 @@ Future<T?> showSheet<T>(BuildContext context, {required String title, String? en
         height: (h * height).clamp(200, h - ins.top - 20),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border.all(color: accent.withValues(alpha: .33)),
-          gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xff18245a), Color(0xff0b1236), Color(0xff060a22)]),
+          border: Border.all(color: N.orange.withValues(alpha: .7), width: 1.4),
+          gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xff161d52), Color(0xff0b1138), Color(0xff060a24)]),
+          boxShadow: hq ? [BoxShadow(color: N.orange.withValues(alpha: .25), blurRadius: 24)] : null,
         ),
         child: Column(children: [
           const SizedBox(height: 8),
-          Container(width: 46, height: 5, decoration: BoxDecoration(color: accent.withValues(alpha: .8), borderRadius: BorderRadius.circular(3))),
+          Container(width: 46, height: 5, decoration: BoxDecoration(gradient: const LinearGradient(colors: [N.orange, N.pink]), borderRadius: BorderRadius.circular(3))),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
             child: Row(children: [
-              IconBtn(menu('g_x'), onTap: () => Navigator.of(ctx).pop()),
+              NeonIconButton(iconData: Icons.close_rounded, size: 40, onTap: () => Navigator.of(ctx).pop()),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  if (en != null) tHead(en, size: 9, color: accent),
+                  if (en != null) tHead(en, size: 9, color: N.amber),
                   tTitle(title, size: 20, lines: 1),
                 ]),
               ),
@@ -139,9 +141,9 @@ Future<T?> showCard<T>(BuildContext context, {Color accent = C.gold, required Wi
           width: (MediaQuery.sizeOf(ctx).width * .88).clamp(0, 420),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: accent.withValues(alpha: .53)),
-            gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xff1d2a66), Color(0xff0c1238), Color(0xff070a22)]),
-            boxShadow: glow(accent, 30, .5),
+            border: Border.all(color: Color.lerp(accent, N.orange, .6)!, width: 1.5),
+            gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xff1a2160), Color(0xff0c1238), Color(0xff070a24)]),
+            boxShadow: glow(N.orange, 30, .45),
           ),
           child: ClipRRect(borderRadius: BorderRadius.circular(26), child: SingleChildScrollView(child: child(ctx))),
         ),
@@ -169,7 +171,8 @@ Future<bool> confirm(BuildContext context, String title, String body, {String ye
   return r == true;
 }
 
-// ---------------- top HUD (hub style) ----------------
+// ---------------- top HUD (v4) ----------------
+/// Profile chip (avatar in an orange neon ring, name, level bar) + currency pills (coins, gems). Tour keys attached.
 class Hud extends StatelessWidget {
   final VoidCallback onProfile, onShop, onDaily, onOracle;
   final bool dailyReady;
@@ -186,76 +189,51 @@ class Hud extends StatelessWidget {
         final frac = lp != null ? lp.frac : local.cur / local.need;
         final name = prof?.s('username') ?? p.name;
         final avatar = prof != null ? (prof.str('avatar_url') ?? teamImgById(prof.s('equipped_disc', 'club0'))) : teamImg(teamById(p.team));
+        final gems = prof?.i('gems') ?? p.gems;
         final top = MediaQuery.paddingOf(context).top;
         return Container(
           padding: EdgeInsets.fromLTRB(12, top + 6, 12, 10),
-          decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xeb02040e), Color(0x8c02040e), Color(0x0002040e)])),
+          decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xe6050822), Color(0x80050822), Color(0x00050822)])),
           child: Row(children: [
-            Press(
-              onTap: onProfile,
-              child: Row(children: [
-                Stack(clipBehavior: Clip.none, alignment: Alignment.bottomCenter, children: [
+            Flexible(
+              child: Press(
+                key: TourKeys.profile,
+                onTap: onProfile,
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(shape: BoxShape.circle, gradient: const SweepGradient(colors: [C.cyan, C.violet, C.cyan]), boxShadow: glow(C.cyan, 10, .5)),
-                    child: Disc(avatar, size: 46, ring: const Color(0xff050816)),
+                    padding: const EdgeInsets.all(2.2),
+                    decoration: BoxDecoration(shape: BoxShape.circle, gradient: const SweepGradient(colors: [N.orange, N.pink, N.blue, N.orange]), boxShadow: glow(N.orange, 10, .5)),
+                    child: Disc(avatar, size: 44, ring: N.navy),
                   ),
-                  Positioned(
-                    bottom: -6,
-                    child: SizedBox(width: 40, child: ClipRRect(borderRadius: BorderRadius.circular(3), child: LinearProgressIndicator(value: frac.clamp(.04, 1), minHeight: 4, color: C.cyan, backgroundColor: const Color(0x22ffffff)))),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 120),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                        tBold(name, size: 14, lines: 1),
+                        const SizedBox(height: 3),
+                        Row(children: [
+                          T('Lv $lvl', size: 10, family: F.num, weight: 700, color: N.amber),
+                          const SizedBox(width: 5),
+                          Expanded(child: Bar(v: frac, h: 5, color: N.amber, color2: N.orange2)),
+                        ]),
+                      ]),
+                    ),
                   ),
                 ]),
-                const SizedBox(width: 8),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 104),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    tBold(name, size: 15, lines: 1),
-                    T(prof == null ? 'Cadet · آفلاین' : (Auth.i.isGuest ? 'Cadet · مهمان' : 'Pilot · ${prof.s('league')}'), size: 10, color: C.dim, lines: 1),
-                  ]),
-                ),
-              ]),
-            ),
-            const Spacer(),
-            _HudPill(icon: menu('g_coin'), text: en(p.coins), color: C.gold, onTap: onShop),
-            const SizedBox(width: 6),
-            _HudPill(icon: null, text: 'Lv $lvl', color: C.green, onTap: onProfile),
-            const SizedBox(width: 4),
-            IconBtn(menu('ic_gift'), onTap: onDaily, badge: dailyReady, size: 36),
-            Press(
-              onTap: onOracle,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(shape: BoxShape.circle, gradient: const SweepGradient(colors: [C.violet, C.cyan, C.violet]), boxShadow: glow(C.violet, 12, .6)),
-                child: Disc(oracleImg('idle'), size: 44, ring: const Color(0xff0a0f2c)),
               ),
             ),
+            const SizedBox(width: 8),
+            Row(key: TourKeys.currencies, mainAxisSize: MainAxisSize.min, children: [
+              NeonPill(icon: menu('g_coin'), text: en(p.coins), color: C.gold, onTap: onShop, plus: true),
+              const SizedBox(width: 6),
+              NeonPill(icon: V4.ic('gem'), text: en(gems), color: const Color(0xffff9ad0), onTap: onShop),
+            ]),
           ]),
         );
       },
     );
   }
-}
-
-class _HudPill extends StatelessWidget {
-  final String? icon;
-  final String text;
-  final Color color;
-  final VoidCallback onTap;
-  const _HudPill({required this.icon, required this.text, required this.color, required this.onTap});
-  @override
-  Widget build(BuildContext context) => Press(
-        onTap: onTap,
-        child: Container(
-          height: 34,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(color: color.withValues(alpha: .1), borderRadius: BorderRadius.circular(17), border: Border.all(color: color.withValues(alpha: .55))),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            if (icon != null) Img(icon!, w: 18, h: 18) else Icon(Icons.bolt, size: 16, color: color),
-            const SizedBox(width: 4),
-            T(text, size: 14, family: F.num, weight: 700, color: color),
-          ]),
-        ),
-      );
 }
 
 // ---------------- bottom navigation ----------------
@@ -342,7 +320,7 @@ class NavBar extends StatelessWidget {
   }
 }
 
-/// Header for full-screen pages (back button + Persian title + English caption).
+/// Header for full-screen pages (glass back button + Persian title + English caption), SafeArea aware.
 class Header extends StatelessWidget {
   final String title;
   final String? en;
@@ -351,14 +329,15 @@ class Header extends StatelessWidget {
   const Header({super.key, required this.title, this.en, required this.onBack, this.right});
   @override
   Widget build(BuildContext context) => Padding(
-        padding: EdgeInsets.fromLTRB(8, MediaQuery.paddingOf(context).top + 6, 12, 6),
+        padding: EdgeInsets.fromLTRB(10, MediaQuery.paddingOf(context).top + 6, 14, 6),
         child: Row(children: [
-          IconBtn(ui2('btn_back'), onTap: onBack),
-          if (right != null) right!,
+          NeonIconButton(iconData: Icons.arrow_back_rounded, size: 42, onTap: onBack),
+          if (right != null) ...[const SizedBox(width: 8), right!],
+          const SizedBox(width: 8),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              if (en != null) tHead(en!, size: 9),
-              tTitle(title, size: 19, lines: 1),
+              if (en != null) T(en!, size: 9, family: F.head, weight: 700, spacing: 2.5, color: N.amber, lines: 1),
+              tTitle(title, size: 19, lines: 1, shadows: hq ? const [Shadow(color: Color(0x99ff8a2a), blurRadius: 12)] : null),
             ]),
           ),
         ]),

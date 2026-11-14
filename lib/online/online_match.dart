@@ -18,6 +18,7 @@ import '../net/supabase.dart';
 import '../oracle/oracle.dart';
 import '../screens/match.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
 import 'link.dart';
 import 'netcode.dart';
 import 'room_ui.dart';
@@ -276,7 +277,7 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
           sfx(Snd.goal);
           sfx(Snd.roar);
           buzz('heavy');
-          _banner('گل!', names[ev.team], ev.team == 0 ? C.cyan : C.red);
+          _banner('گل!', names[ev.team], ev.team == 0 ? C.cyanOld : C.red);
           if (ev.team == myTeam) Oracle.i.react('goal');
         }
       case EvType.clock:
@@ -478,9 +479,9 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
                     child: Panel(
                       height: 60,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      accent: h.turn == 0 ? C.cyan : C.red,
+                      accent: h.turn == 0 ? C.cyanOld : C.red,
                       child: Row(children: [
-                        Expanded(child: MatchSide(team: teams[0], name: names[0], on: h.turn == 0, color: C.cyan)),
+                        Expanded(child: MatchSide(team: teams[0], name: names[0], on: h.turn == 0, color: C.cyanOld)),
                         Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                           tTitle('${h.s0} : ${h.s1}', size: 24),
                           T(h.clock, size: 9, family: F.head, weight: 700, spacing: 2, color: h.sudden ? C.gold : C.dim),
@@ -511,7 +512,7 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
                       child: FractionallySizedBox(
                         alignment: h.turn == 0 ? Alignment.centerLeft : Alignment.centerRight,
                         widthFactor: h.tl,
-                        child: DecoratedBox(decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), gradient: LinearGradient(colors: h.turn == 0 ? const [C.cyan, C.blue] : const [C.red, C.orange]))),
+                        child: DecoratedBox(decoration: BoxDecoration(borderRadius: BorderRadius.circular(3), gradient: LinearGradient(colors: h.turn == 0 ? const [C.cyanOld, C.blue] : const [C.red, C.orange]))),
                       ),
                     ),
                   ),

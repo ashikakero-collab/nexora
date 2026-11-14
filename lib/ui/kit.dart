@@ -46,7 +46,9 @@ class T extends StatelessWidget {
       sp = 0;
       if (heavy) sz = (size * (size < 12 ? 1.2 : 1.03)).roundToDouble();
     }
-    return Text(s,
+    // Orbitron has no U+00B7 (middle dot) glyph: it rendered as a box in v3 captions ("PORTAL · SELECT")
+    final txt = !rtl && fam == F.title && s.contains('·') ? s.replaceAll('·', '•') : s;
+    return Text(txt,
         maxLines: lines,
         overflow: lines != null ? TextOverflow.ellipsis : null,
         textAlign: align ?? (rtl ? TextAlign.right : null),

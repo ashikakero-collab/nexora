@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../core/assets.dart';
 import '../core/theme.dart';
 import '../oracle/oracle.dart';
+import '../oracle/avatar.dart';
 import '../ui/kit.dart';
 import 'match.dart';
 
@@ -103,16 +104,9 @@ class _ResultScreenState extends State<ResultScreen> {
             ),
           const SizedBox(height: 14),
           Row(textDirection: TextDirection.rtl, crossAxisAlignment: CrossAxisAlignment.end, children: [
-            FloatY(amp: 4, child: Img(oracleImg(line.$1), w: 96, h: 104)),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 24),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: const Color(0xe60e1e50), borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0x665ce1ff))),
-                child: T(line.$2, size: 12, height: 1.6, color: const Color(0xffe6f4ff)),
-              ),
-            ),
+            OracleAvatar(size: 130, listen: false, mood: line.$1, waveOnStart: out != 'defeat'),
+            const SizedBox(width: 6),
+            Expanded(child: Padding(padding: const EdgeInsets.only(bottom: 24), child: OracleBubble(line.$2))),
           ]),
           if (cup != null)
             Padding(

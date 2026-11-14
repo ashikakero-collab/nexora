@@ -15,6 +15,7 @@ import '../net/auth.dart';
 import '../net/discs.dart';
 import '../ui/chrome.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
 import 'team.dart' show StatBars;
 
 const _rc = [Color(0xff8ea3d6), Color(0xff4fe3ff), Color(0xffb46bff), Color(0xffffd257)];
@@ -115,7 +116,7 @@ class _ShopScreenState extends State<ShopScreen> {
     return Scaffold(
       backgroundColor: C.bg,
       body: Stack(children: [
-        const Space(theme: SpaceTheme.base, dim: .1),
+        const SpaceBg(image: V4.bgPanel, dim: .05),
         ListenableBuilder(
           listenable: Listenable.merge([Store.i, Discs.i, Auth.i]),
           builder: (_, __) {
@@ -133,7 +134,7 @@ class _ShopScreenState extends State<ShopScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(textDirection: TextDirection.rtl, children: [
-                  for (final (k, icon, label) in [('team', kit('shield'), 'دیسک'), ('ball', kit('ball'), 'توپ'), ('field', kit('stadium'), 'زمین'), ('chest', kit('chest'), 'صندوقچه')])
+                  for (final (k, icon, label) in [('team', V4.h('shield'), 'دیسک'), ('ball', V4.h('ball'), 'توپ'), ('field', V4.h('stadium'), 'زمین'), ('chest', V4.h('chest'), 'صندوقچه')])
                     Expanded(
                       child: Press(
                         onTap: () => setState(() => kind = k),
@@ -142,9 +143,9 @@ class _ShopScreenState extends State<ShopScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 4),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: kind == k ? C.cyan : C.line, width: kind == k ? 1.5 : 1),
-                            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: kind == k ? const [Color(0x664fe3ff), Color(0xcc0a1236)] : const [Color(0x99142060), Color(0xcc080c22)]),
-                            boxShadow: kind == k ? glow(C.cyan, 12, .5) : null,
+                            border: Border.all(color: kind == k ? N.orange : C.line, width: kind == k ? 1.6 : 1),
+                            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: kind == k ? const [Color(0x66ff8a2a), Color(0xcc0a1236)] : const [Color(0x99142060), Color(0xcc080c22)]),
+                            boxShadow: kind == k ? glow(N.orange, 12, .5) : null,
                           ),
                           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Img(icon, w: 36, h: 36), T(label, size: 10, color: kind == k ? Colors.white : C.dim)]),
                         ),

@@ -14,6 +14,8 @@ import '../net/auth.dart';
 import '../net/discs.dart';
 import '../net/supabase.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
+import 'avatar.dart';
 import 'kb.dart';
 
 final _rnd = math.Random();
@@ -417,12 +419,12 @@ class OracleLayer extends StatelessWidget {
               child: IgnorePointer(
                 child: Enter(
                   child: Row(textDirection: TextDirection.rtl, children: [
-                    Img(oracleImg(o.coachMsg!.mood), w: 54, h: 54),
+                    OracleAvatar(key: ValueKey('c${o.coachMsg!.id}'), size: 62, listen: false, mood: o.coachMsg!.mood, glow: false),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(color: const Color(0xeb0e1e50), borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0x665ce1ff))),
+                        decoration: BoxDecoration(color: const Color(0xeb10174a), borderRadius: BorderRadius.circular(16), border: Border.all(color: N.orange.withValues(alpha: .7))),
                         child: T(o.coachMsg!.text, size: 12, color: const Color(0xffe6f4ff)),
                       ),
                     ),
@@ -439,10 +441,10 @@ class OracleLayer extends StatelessWidget {
               child: Enter(
                 child: Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: const Color(0xf00e1e50), borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0x805ce1ff)), boxShadow: glow(C.cyan, 14, .3)),
+                  decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xf5161d52), Color(0xf50a0f30)]), borderRadius: BorderRadius.circular(18), border: Border.all(color: N.orange, width: 1.3), boxShadow: glow(N.orange, 14, .35)),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.end, mainAxisSize: MainAxisSize.min, children: [
                     Row(textDirection: TextDirection.rtl, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      GestureDetector(onTap: onOpenPanel, child: Img(oracleImg(o.msg!.mood), w: 52, h: 52)),
+                      OracleAvatar(key: ValueKey('b${o.msg!.id}'), size: 64, listen: false, mood: o.msg!.mood, glow: false, onTap: onOpenPanel),
                       const SizedBox(width: 8),
                       Expanded(child: T(o.msg!.text, size: 12, height: 1.6, color: const Color(0xffe6f4ff))),
                       GestureDetector(
@@ -545,7 +547,7 @@ class _OraclePanelState extends State<OraclePanel> {
               const Spacer(),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [tHead('ORACLE CORE', size: 9, color: C.violet), tTitle('اوراکل', size: 20)]),
               const SizedBox(width: 8),
-              FloatY(child: Img(oracleImg(busy ? 'spin' : 'hero'), w: 64, h: 64)),
+              OracleAvatar(size: 84, mood: busy ? 'spin' : null),
             ]),
           ),
           Expanded(
@@ -563,9 +565,9 @@ class _OraclePanelState extends State<OraclePanel> {
                     constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * .82),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: me ? const Color(0x664fe3ff) : const Color(0xe60e1e50),
+                      color: me ? const Color(0x55ff8a2a) : const Color(0xe6101848),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: me ? C.cyan.withValues(alpha: .5) : const Color(0x665ce1ff)),
+                      border: Border.all(color: me ? N.orange.withValues(alpha: .7) : const Color(0x66ff4f9a)),
                     ),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                       T(m.text, size: 13, height: 1.6),

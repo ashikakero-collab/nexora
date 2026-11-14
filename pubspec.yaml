@@ -27,9 +27,6 @@ flutter:
   uses-material-design: true
   shaders:
     - shaders/ball.frag
-    - shaders/intro_warp.frag
-    - shaders/intro_planet.frag
-    - shaders/intro_post.frag
   assets:
     - assets/g/arrow/
     - assets/g/balls/

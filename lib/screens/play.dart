@@ -6,7 +6,9 @@ import '../core/store.dart';
 import '../core/theme.dart';
 import '../net/auth.dart';
 import '../ui/chrome.dart';
+import '../tutorial/keys.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
 import 'setup.dart';
 
 const _medal = ['medal_bronze', 'medal_silver', 'medal_gold', 'medal_epic', 'shield_epic', 'shield_crown'];
@@ -45,12 +47,13 @@ class _PlayScreenState extends State<PlayScreen> {
     return Scaffold(
       backgroundColor: C.bg,
       body: Stack(children: [
-        const Space(theme: SpaceTheme.holo),
+        const SpaceBg(image: V4.bgMode),
         ListView(padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 20), children: [
           Header(title: 'آرکید نکسورا', en: 'PORTAL · SELECT', onBack: () => Navigator.pop(context)),
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: OnlineCard(onOnline: widget.onOnline)),
+          Padding(key: TourKeys.online, padding: const EdgeInsets.symmetric(horizontal: 16), child: OnlineCard(onOnline: widget.onOnline)),
           const TitleBar('آفلاین', en: 'OFFLINE · BOT & LOCAL'),
           SizedBox(
+            key: TourKeys.modes,
             height: cw * 1.32 + 32,
             child: PageView.builder(
               controller: pc,
@@ -71,20 +74,19 @@ class _PlayScreenState extends State<PlayScreen> {
                       child: Press(
                         onTap: () => widget.onMode(mm),
                         scaleTo: .97,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(26),
-                            border: Border.all(color: mm.color.withValues(alpha: .53), width: 1.5),
-                            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [mm.color.withValues(alpha: .33), const Color(0xd90e1640), const Color(0xfa050818)]),
-                            boxShadow: glow(mm.color, 18, .35),
-                          ),
+                        child: NeonPanel(
+                          radius: 26,
+                          padding: EdgeInsets.zero,
+                          selected: d.abs() < .5,
+                          rim: d.abs() < .5 ? N.rimBlue : const [Color(0x99ff8a2a), Color(0x66ff4f9a)],
+                          fill: [mm.color.withValues(alpha: .28), const Color(0xe60e1440), const Color(0xf5050820)],
                           child: Stack(alignment: Alignment.topCenter, children: [
-                            Positioned(top: 10, child: Img(ui2('portal'), w: cw * 1.05, h: cw * .7, opacity: .42)),
+                            Positioned(top: 10, child: Img(V4.frameCircle, w: cw * .8, h: cw * .8, opacity: .5)),
                             Positioned(
                               top: cw * .1,
                               child: Transform.translate(
                                 offset: Offset(d * 40, 0),
-                                child: Stack(alignment: Alignment.center, children: [Pulse(size: cw * .45, color: mm.color.withValues(alpha: .33)), FloatY(child: Img(mm.img, w: cw * .58, h: cw * .62))]),
+                                child: Stack(alignment: Alignment.center, children: [Pulse(size: cw * .45, color: N.orange.withValues(alpha: .28)), FloatY(child: Img(mm.img, w: cw * .58, h: cw * .62))]),
                               ),
                             ),
                             Positioned(
@@ -92,8 +94,8 @@ class _PlayScreenState extends State<PlayScreen> {
                               left: 16,
                               right: 16,
                               child: Column(children: [
-                                tHead(mm.en, size: 10, color: mm.color),
-                                tTitle(mm.name, size: 24, shadows: [Shadow(color: mm.color, blurRadius: 14)]),
+                                tHead(mm.en, size: 10, color: N.amber),
+                                tTitle(mm.name, size: 24, shadows: const [Shadow(color: N.orange, blurRadius: 14)]),
                                 const SizedBox(height: 4),
                                 T(mm.desc, size: 12, color: const Color(0xffc6dbff), align: TextAlign.center, lines: 2),
                                 const SizedBox(height: 8),
@@ -172,16 +174,14 @@ class OnlineCard extends StatelessWidget {
           Press(
             onTap: () => onOnline('hub'),
             scaleTo: .97,
-            child: Container(
+            child: NeonPanel(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: const Color(0x8c78dcff)),
-                gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xff3a1d8a), Color(0xff1b2f8f), Color(0xff0a5a8a)]),
-                boxShadow: glow(C.cyan, 16, .35),
-              ),
+              radius: 22,
+              rim: N.rimBlue,
+              glowOn: true,
+              fill: const [Color(0xff2a1a70), Color(0xff15207a), Color(0xff0a2a6a)],
               child: Row(children: [
-                Img(ui('portal_globe'), w: 84, h: 84),
+                Img(V4.holoBall, w: 84, h: 84),
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
@@ -191,7 +191,7 @@ class OnlineCard extends StatelessWidget {
                         child: const T('LIVE', size: 9, family: F.head, weight: 700, color: Colors.white, spacing: 1),
                       ),
                       const SizedBox(width: 8),
-                      tTitle('آنلاین', size: 24, shadows: const [Shadow(color: C.cyan, blurRadius: 12)]),
+                      tTitle('آنلاین', size: 24, shadows: const [Shadow(color: N.blue, blurRadius: 12)]),
                     ]),
                     const T('مسابقه با بازیکن‌های واقعی · ۱ به ۱، ۲ به ۲، ۳ به ۳', size: 12, color: Color(0xffd6e6ff), lines: 2),
                     if (pr != null) tBold('امتیاز ${fa(pr.i('rating'))} · 💎 ${fa(pr.i('gems'))}', size: 11, color: C.gold),
@@ -208,9 +208,11 @@ class OnlineCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Press(
                     onTap: () => onOnline(k),
-                    child: Container(
-                      height: 40,
-                      decoration: BoxDecoration(color: const Color(0xcc0a1030), borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line)),
+                    child: NeonPanel(
+                      height: 42,
+                      radius: 14,
+                      padding: EdgeInsets.zero,
+                      rim: const [Color(0xaaff8a2a), Color(0x88ff4f9a)],
                       child: Row(mainAxisAlignment: MainAxisAlignment.center, textDirection: TextDirection.rtl, children: [Img(img, w: 24, h: 24), const SizedBox(width: 4), tBold(l, size: 11, lines: 1)]),
                     ),
                   ),

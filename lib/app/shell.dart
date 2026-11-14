@@ -12,7 +12,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:material_ui/material_ui.dart' hide Tab;
+import 'package:material_ui/material_ui.dart';
 
 import '../core/sound.dart';
 import '../core/store.dart';
@@ -35,7 +35,9 @@ import '../screens/shop.dart';
 import '../screens/team.dart';
 import '../social/social.dart' as social;
 import '../ui/chrome.dart';
+import '../tutorial/keys.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
 
 const int kDayMs = 86400000;
 
@@ -107,7 +109,7 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
   late final AnimationController veil = AnimationController(vsync: this, duration: const Duration(milliseconds: 170));
   final depth = ValueNotifier<int>(0);
   late final _DepthObserver _obs = _DepthObserver(depth);
-  final tab = ValueNotifier<Tab>(Tab.arcade);
+  final tab = ValueNotifier<NavTab>(NavTab.home);
   bool intro = true;
   bool _recoveryShown = false;
   Launch? launch;
@@ -186,7 +188,7 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
 
   void goHome() => transition(() {
         _toRoot();
-        tab.value = Tab.arcade;
+        tab.value = NavTab.home;
         Sound.scene(AudioScene.menu);
       });
 
@@ -194,33 +196,33 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
   void _goTabByName(String t) {
     switch (t) {
       case 'home' || 'arcade':
-        tab.value = Tab.arcade;
+        tab.value = NavTab.home;
       case 'social' || 'chat':
-        tab.value = Tab.chat;
+        tab.value = NavTab.social;
       case 'play':
-        tab.value = Tab.arcade;
+        tab.value = NavTab.home;
         _push(PlayScreen(onMode: openMode, onOnline: (e) => openOnline(e)));
       case 'shop':
-        tab.value = Tab.arcade;
+        tab.value = NavTab.home;
         _push(ShopScreen(onChest: openChest));
       case 'profile':
-        tab.value = Tab.arcade;
+        tab.value = NavTab.home;
         _push(ProfileScreen(onOnline: (e) => openOnline(e)));
       default:
-        tab.value = Tab.arcade;
+        tab.value = NavTab.home;
     }
   }
 
-  void onTab(Tab t) {
+  void onTab(NavTab t) {
     switch (t) {
-      case Tab.arcade || Tab.chat:
+      case NavTab.home || NavTab.social:
         tab.value = t;
-      case Tab.reward:
-        openDaily();
-      case Tab.shop:
-        _push(ShopScreen(onChest: openChest));
-      case Tab.menu:
-        openSettings();
+      case NavTab.rank:
+        openOnline('leagues');
+      case NavTab.play:
+        _push(PlayScreen(onMode: openMode, onOnline: (e) => openOnline(e)));
+      case NavTab.team:
+        openTeam();
     }
   }
 
@@ -233,7 +235,7 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
       case 'challenges':
         openOnline('challenges');
       case 'social':
-        tab.value = Tab.chat;
+        tab.value = NavTab.social;
       case 'oracle':
         _push(const OraclePanel());
       case 'profile':
@@ -249,7 +251,7 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
     }
   }
 
-  Future<R?> _push<R>(Widget page) => nav.push<R>(fadeRoute(page));
+  Future<R?> _push<R>(Widget page) => nav.push<R>(neonRoute(page));
 
   // ---------------- overlays ----------------
   void pushOverlay(String key, WidgetBuilder b) {
@@ -449,7 +451,10 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
       navigatorKey: navKey,
       navigatorObservers: [_obs],
       theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: C.bg, fontFamily: F.body, useMaterial3: true),
-      builder: (context, child) => Stack(children: [
+      // v4: clamp the system font scale so layouts built for a ~400 dp design width never overflow
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaler: MediaQuery.textScalerOf(context).clamp(minScaleFactor: .85, maxScaleFactor: 1.15)),
+        child: Stack(children: [
         child ?? const SizedBox.shrink(),
         // Oracle coach + bubble (bubble only while the tabs are visible)
         Positioned.fill(
@@ -470,6 +475,7 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
             }),
           ),
       ]),
+      ),
       home: _TabsPage(shell: this),
     );
   }
@@ -483,13 +489,13 @@ class _TabsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ins = MediaQuery.paddingOf(context);
-    final top = ins.top + 62, bottom = kTabH + math.max(10.0, ins.bottom) + 6;
-    return ValueListenableBuilder<Tab>(
+    final top = ins.top + 66, bottom = kNavH + math.max(8.0, ins.bottom) + 6;
+    return ValueListenableBuilder<NavTab>(
       valueListenable: shell.tab,
       builder: (context, tab, _) => PopScope(
-        canPop: tab == Tab.arcade,
+        canPop: tab == NavTab.home,
         onPopInvokedWithResult: (did, _) {
-          if (!did && tab != Tab.arcade) shell.tab.value = Tab.arcade;
+          if (!did && tab != NavTab.home) shell.tab.value = NavTab.home;
         },
         child: Scaffold(
           backgroundColor: C.bg,
@@ -498,14 +504,14 @@ class _TabsPage extends StatelessWidget {
             builder: (context, _) {
               final dailyReady = shell.dailyReady, chestReady = shell.chestReady;
               return Stack(children: [
-                Positioned.fill(child: Space(theme: tab == Tab.arcade ? SpaceTheme.stadium : SpaceTheme.base, dim: tab == Tab.arcade ? 0 : .15)),
+                Positioned.fill(child: SpaceBg(image: tab == NavTab.home ? V4.bgSpace : V4.bgPortal3, dim: tab == NavTab.home ? 0 : .2)),
                 Positioned.fill(
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 240),
                     reverseDuration: const Duration(milliseconds: 120),
                     child: KeyedSubtree(
                       key: ValueKey(tab),
-                      child: tab == Tab.chat
+                      child: tab == NavTab.social
                           ? social.SocialRoot(top: top, bottom: bottom)
                           : HomeScreen(
                               top: top,
@@ -516,6 +522,11 @@ class _TabsPage extends StatelessWidget {
                               onChest: () => shell.openChest(false),
                               dailyReady: dailyReady,
                               chestReady: chestReady,
+                              onShop: () => shell._push(ShopScreen(onChest: shell.openChest)),
+                              onSocial: () => shell.tab.value = NavTab.social,
+                              onRank: () => shell.openOnline('leagues'),
+                              onSettings: shell.openSettings,
+                              onOracle: () => shell._push(const OraclePanel()),
                             ),
                     ),
                   ),
@@ -536,7 +547,7 @@ class _TabsPage extends StatelessWidget {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  child: NavBar(tab: tab, onTab: shell.onTab, badges: {if (chestReady) Tab.shop, if (dailyReady) Tab.reward}),
+                  child: NeonNavBar(tab: tab, onTab: shell.onTab, fa: Store.i.p.lang == 'fa', keys: TourKeys.nav),
                 ),
               ]);
             },

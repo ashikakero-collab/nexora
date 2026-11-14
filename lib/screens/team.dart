@@ -11,11 +11,13 @@ import '../core/owned.dart';
 import '../core/store.dart';
 import '../core/theme.dart';
 import '../game/data.dart';
-import '../game/engine.dart' show powerMul, aimDevDeg, aimPreview;
+import '../game/engine.dart' show powerFrac, aimDevDeg, aimPreview;
 import '../net/auth.dart';
 import '../net/discs.dart';
 import '../ui/chrome.dart';
+import '../tutorial/keys.dart';
 import '../ui/kit.dart';
+import '../ui/v4.dart';
 
 const kCatFa = {'club': 'باشگاه', 'nat': 'ملی', 'elite': 'الیت', 'emb': 'نشان', 'leg': 'افسانه', 'vip': 'VIP', 'chrome': 'کروم', 'car': 'خودرو', 'lux': 'لوکس', 'spt': 'ورزشی'};
 const kCatOrder = ['club', 'nat', 'elite', 'emb', 'leg', 'vip', 'chrome', 'car', 'lux', 'spt'];
@@ -33,10 +35,11 @@ class _TeamScreenState extends State<TeamScreen> {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: C.bg,
         body: Stack(children: [
-          const Space(theme: SpaceTheme.base, dim: .15),
+          const SpaceBg(image: V4.bgTeam, dim: .1),
           Column(children: [
             Header(title: 'تیم من', en: 'SQUAD · DISCS · LOADOUT', onBack: () => Navigator.pop(context)),
             Padding(
+              key: TourKeys.teamTabs,
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
               child: Segment<String>(value: sub, onChange: (v) => setState(() => sub = v), items: const [('disc', 'دیسک'), ('ball', 'توپ'), ('field', 'زمین'), ('form', 'ترکیب')]),
             ),
@@ -162,6 +165,7 @@ class _DiscsState extends State<_Discs> {
         child: Column(children: [
           // hero with the disc-ring art and left/right arrows (old Persian flow)
           SizedBox(
+            key: TourKeys.teamHero,
             height: 240,
             child: Row(children: [
               _Arrow(left: true, onTap: () => step(-1)),
@@ -199,8 +203,8 @@ class _DiscsState extends State<_Discs> {
               // v4: the numbers that really change play (Engine: powerMul / aimDevDeg / aimPreview)
               Row(textDirection: TextDirection.rtl, children: [
                 for (final (l, v) in [
-                  ('ضربه', '×${powerMul(ds.power).toStringAsFixed(2)}'),
-                  ('انحراف', '±${aimDevDeg(ds.accuracy).toStringAsFixed(1)}°'),
+                  ('ضربه', '${(powerFrac(ds.power) * 100).toStringAsFixed(0)}٪'),
+                  ('انحراف', '${aimDevDeg(ds.accuracy).toStringAsFixed(1)}°'),
                   ('خط نشانه', '×${aimPreview(ds.accuracy).toStringAsFixed(2)}'),
                 ])
                   Expanded(child: Column(children: [T(l, size: 10, color: C.dim), T(v, size: 13, family: F.num, weight: 700)])),
@@ -243,7 +247,12 @@ class _DiscsState extends State<_Discs> {
               onTap: () => setState(() => focus = t.id),
               scaleTo: .92,
               child: Container(
-                decoration: BoxDecoration(color: sel ? c.withValues(alpha: .13) : const Color(0xb3080c22), borderRadius: BorderRadius.circular(16), border: Border.all(color: sel ? c : const Color(0x296eaaff))),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: sel ? [c.withValues(alpha: .25), const Color(0xe60a0f30)] : const [Color(0xd9121a48), Color(0xe6080c2a)]),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: sel ? N.orange : const Color(0x55ff8a2a), width: sel ? 1.6 : 1),
+                  boxShadow: sel && hq ? [BoxShadow(color: N.orange.withValues(alpha: .4), blurRadius: 10)] : null,
+                ),
                 child: Stack(children: [
                   Center(
                     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [

@@ -117,11 +117,11 @@ CardStats cardStats(String seed) {
     }
   }
   final (lo, hi) = switch (cat) {
-    'leg' => (8.0, 10.0),
-    'vip' || 'nx' => (7.0, 9.5),
-    'elite' || 'emb' || 'chrome' => (5.5, 8.5),
-    'car' || 'lux' || 'spt' || 'motor' || 'sport' || 'fashion' => (5.0, 8.0),
-    _ => (3.5, 7.5), // club / nat
+    'leg' => (8.5, 10.0),
+    'vip' || 'nx' => (7.5, 9.5),
+    'elite' || 'emb' || 'chrome' => (6.5, 9.0),
+    'car' || 'lux' || 'spt' || 'motor' || 'sport' || 'fashion' => (6.0, 8.5),
+    _ => (5.5, 8.5), // club / nat (power is linear: 5.5 = 55% of a power-10 disc)
   };
   final h = hashStr('stats:$id');
   final a = (h & 0xffff) / 0xffff, b = ((h >> 16) & 0xffff) / 0xffff;

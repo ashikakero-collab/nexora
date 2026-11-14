@@ -125,11 +125,13 @@ const kTuneStars = PhysTune(
   discR: 49, ballR: 27,
   // v4 retune (phone feedback 2026-11-14: "billiards ball, heavy Soccer Stars pucks"). v3 values in brackets.
   discM: 4, ballM: 1, // [3] disc 4x the ball: a disc striking the ball sends it off at (1+e)*4/5 = 1.52x its speed
-  // power stat: 0.75..1.25 x (powerMul, +-25% across 1..10); discVmax above 1.25 x shotMax so it never saturates
+  // power stat (stars): full-drag speed = discVmax * power/10 (powerFrac, exact + linear); shotMax only without stats
   shotMax: 1900, discVmax: 2400, powerGodot: false,
-  discFric: 1100, discDrag: .9, // [900, .6] heavier pucks: stop sooner
-  ballFric: 240, ballDrag: .35, // [380, .6] ball: ~4.6x less decel than a disc -> billiard glide
-  vStop: 3, vSettle: 40, settleK: 2, vSafe: 4200, // gentle settle, no abrupt stop
+  // v4.1 smooth stop: velocity-proportional drag dominates at speed (ease-out), a small constant rolling friction
+  // ends the tail, no settle boost, rest only below 2 px/s. [v4.0: disc 1100 + .9 v, ball 240 + .35 v, vStop 3, settle x2 < 40]
+  discFric: 330, discDrag: 1.7, // heavy pucks
+  ballFric: 85, ballDrag: .66, // light billiard ball
+  vStop: 2, vSettle: 0, settleK: 1, vSafe: 4200,
   eDiscDisc: .88, eDiscBall: .90, discDiscK: 1, // equal-mass head-on: target gets 94% of the momentum
   eSoft: .5, vSoft: 120, // only very light touches are damped (anti-jitter)
   eWallBall: .92, tWallBall: .99, // [.90, .98] lively pool cushion: 0.92 normal, tangential nearly kept
@@ -207,6 +209,9 @@ class DiscStats {
   const DiscStats(this.power, this.accuracy);
   static const def = DiscStats(5, 5);
 }
+
+/// Linear power fraction used by the 'stars' profile: stat / 10, clamped to 1..10 (power 1 still moves at 10%).
+double powerFrac(double p) => _min(10, _max(1, p)) / 10;
 
 double powerMul(double p) => .75 + (_min(10, _max(1, p)) - 1) / 9 * .5;
 double aimDevDeg(double a) => (10 - _min(10, _max(1, a))) / 9 * 4;
@@ -534,6 +539,10 @@ class Engine {
   /// Launch speed for drag power p (0..1): classic TS curve, or Godot's linear SHOT_MAX * p clamped to DISC_VMAX.
   double _shotSpeed(int team, double p) {
     if (godot) {
+      if (tu.name == 'stars' && cfg.stats != null) {
+        // v4.1 EXACT LINEAR power: full-drag speed = discVmax * power / 10 (power 5 -> exactly half of power 10).
+        return tu.discVmax * p * powerFrac(statsOf(team).power);
+      }
       var v = tu.shotMax * p;
       if (cfg.stats != null) {
         v *= tu.powerGodot ? powerMulGodot(statsOf(team).power) : powerMul(statsOf(team).power);
