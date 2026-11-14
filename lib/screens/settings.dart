@@ -72,7 +72,7 @@ class _SettingsSheetState extends State<SettingsSheet> {
               toast('پیشرفت پاک شد', 'ok');
             }),
             const SizedBox(height: 24),
-            const T('NEXORA · Finger Soccer · v6.0 (Flutter)', size: 10, family: F.head, weight: 700, spacing: 2, color: C.dim2, align: TextAlign.center),
+            const T('NEXORA · Finger Soccer · v4 (Flutter 0.4.0)', size: 10, family: F.head, weight: 700, spacing: 2, color: C.dim2, align: TextAlign.center),
           ]);
         },
       );

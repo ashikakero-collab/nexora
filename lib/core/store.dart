@@ -28,6 +28,10 @@ class Profile {
   // Flutter additions (additive keys; ignored by the RN build)
   bool debugOverlay = false;
   String lang = 'fa';
+  // v4 additions
+  int goal = 0; // goal skin index (kGoalSkins)
+  List<int> ownedGoals = [0];
+  bool tutorialDone = false;
 
   Profile();
 
@@ -51,6 +55,7 @@ class Profile {
         'aiLvl': aiLvl, 'limit': limit, 'turnTime': turnTime, 'cupsWon': cupsWon, 'winStreak': winStreak, 'bestStreak': bestStreak,
         'chests': chests, 'lastChest': lastChest, 'claimedAch': claimedAch, 'quality': quality, 'volume': volume,
         'oracle': oracle, 'oracleTour': oracleTour, 'fieldsV': fieldsV, 'debugOverlay': debugOverlay, 'lang': lang,
+        'goal': goal, 'ownedGoals': ownedGoals, 'tutorialV4': tutorialDone,
       };
 
   static Profile fromJson(Map<String, dynamic> j) {
@@ -96,6 +101,9 @@ class Profile {
     p.fieldsV = i('fieldsV', 1);
     p.debugOverlay = b('debugOverlay', false);
     p.lang = j['lang'] == 'en' ? 'en' : 'fa';
+    p.goal = i('goal', 0);
+    if (j['ownedGoals'] is List) p.ownedGoals = (j['ownedGoals'] as List).whereType<num>().map((e) => e.toInt()).toList();
+    p.tutorialDone = b('tutorialV4', false);
     return migrate(p);
   }
 

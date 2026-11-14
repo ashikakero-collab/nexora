@@ -46,6 +46,38 @@ Future<ui.Image> loadImage(String path, {int? width}) async {
   return fr.image;
 }
 
+/// Classic white/black soccer ball drawn with Canvas: used when the ball texture fails to load.
+Future<ui.Image> proceduralBall([int size = 256]) {
+  final rec = ui.PictureRecorder();
+  final c = ui.Canvas(rec);
+  final R = size / 2, o = ui.Offset(R, R);
+  c.drawCircle(o, R, ui.Paint()..color = const ui.Color(0xfff7f8fa));
+  final blk = ui.Paint()..color = const ui.Color(0xff15171c);
+  final seam = ui.Paint()
+    ..style = ui.PaintingStyle.stroke
+    ..strokeWidth = size * .018
+    ..color = const ui.Color(0xff2a2d33);
+  ui.Path pent(ui.Offset ctr, double rad, double rot) {
+    final p = ui.Path();
+    for (var k = 0; k < 5; k++) {
+      final a = rot + k * 2 * math.pi / 5 - math.pi / 2;
+      final pt = ctr + ui.Offset(math.cos(a), math.sin(a)) * rad;
+      k == 0 ? p.moveTo(pt.dx, pt.dy) : p.lineTo(pt.dx, pt.dy);
+    }
+    return p..close();
+  }
+
+  c.drawPath(pent(o, R * .3, 0), blk);
+  for (var k = 0; k < 5; k++) {
+    final a = k * 2 * math.pi / 5 - math.pi / 2;
+    final inner = o + ui.Offset(math.cos(a), math.sin(a)) * R * .3;
+    final outer = o + ui.Offset(math.cos(a), math.sin(a)) * R * .82;
+    c.drawLine(inner, outer, seam);
+    c.drawPath(pent(o + ui.Offset(math.cos(a + math.pi / 5), math.sin(a + math.pi / 5)) * R * .9, R * .26, a + math.pi / 5 + math.pi), blk);
+  }
+  return rec.endRecording().toImage(size, size);
+}
+
 class MatchImages {
   final ui.Image field, ball, t0, t1;
   final ui.Image? headE, headS, shaftE, shaftS;
@@ -98,9 +130,6 @@ class MatchRenderer {
   final ui.Paint _shadowP = ui.Paint()
     ..filterQuality = ui.FilterQuality.low
     ..color = const ui.Color(0x80ffffff);
-  final ui.Paint _ballShadowP = ui.Paint()
-    ..filterQuality = ui.FilterQuality.low
-    ..color = const ui.Color(0x99ffffff);
   final ui.Paint _stroke = ui.Paint()
     ..style = ui.PaintingStyle.stroke
     ..strokeCap = ui.StrokeCap.round
@@ -340,21 +369,60 @@ class MatchRenderer {
     rc[i * 4 + 3] = spr.toDouble();
   }
 
+  /// v4: the ball is ALWAYS drawn with plain Canvas calls (image + gradients). v3 drew it with a FragmentShader that
+  /// positions itself by FlutterFragCoord (physical pixels of the render target): on phones the match is composited
+  /// into an offscreen layer (route fade / RepaintBoundary), so the centre uniform pointed outside the layer and the
+  /// shader discarded every pixel -> invisible ball. The shader path stays available only behind [useBallShader].
+  static bool useBallShader = false;
+
   void _drawBall(ui.Canvas c, double al, double shx, double shy) {
     final b = e.ball;
     final x = b.px + (b.x - b.px) * al + b.vox, y = b.py + (b.y - b.py) * al + b.voy;
-    final r = b.r * (1 + b.sq * .08);
-    // shadow
-    final R = r * 1.3;
-    _set(_xf, 0, 2 * R / spr, 0, x + r * .14 - R, y + r * .26 - R);
-    _rect(_rc, 0, 3);
-    c.drawRawAtlas(atlas, _vf(_xf, 4), _vf(_rc, 4), null, null, null, _ballShadowP);
+    final r = math.max(4.0, b.r * (1 + b.sq * .08));
+    final ctr = ui.Offset(x, y);
+    // soft gray halo ring so the ball reads on any pitch (dark balls on dark fields too)
+    _fill.shader = ui.Gradient.radial(ctr, r * 1.75, const [ui.Color(0x00c4c8d0), ui.Color(0x00c4c8d0), ui.Color(0x99c4c8d0), ui.Color(0x409ca3ad), ui.Color(0x00909090)],
+        const [0, .5, .58, .78, 1]);
+    c.drawCircle(ctr, r * 1.75, _fill);
+    // drop shadow (offset down-right, like the discs)
+    _fill.shader = ui.Gradient.radial(ctr.translate(r * .22, r * .32), r * 1.22, const [ui.Color(0x8c000000), ui.Color(0x40000000), ui.Color(0x00000000)], const [0, .6, 1]);
+    c.drawCircle(ctr.translate(r * .22, r * .32), r * 1.22, _fill);
+    _fill.shader = null;
     final sh = ballShader;
-    if (sh == null) {
-      c.drawImageRect(im.ball, ui.Rect.fromLTWH(0, 0, im.ball.width.toDouble(), im.ball.height.toDouble()), ui.Rect.fromCircle(center: ui.Offset(x, y), radius: r), _img);
+    if (useBallShader && sh != null) {
+      _drawBallShader(c, sh, x, y, r, shx, shy);
       return;
     }
-    // screen-space centre in physical pixels for FlutterFragCoord
+    // body: texture rotated with the ball's in-plane orientation, clipped to a circle
+    final Rm = b.R;
+    final rot = math.atan2(Rm[3], Rm[0]) + b.ang;
+    c.save();
+    _path
+      ..reset()
+      ..addOval(ui.Rect.fromCircle(center: ctr, radius: r));
+    c.clipPath(_path);
+    _fill.color = const ui.Color(0xfff4f6fa);
+    c.drawCircle(ctr, r, _fill); // white base: never transparent even if the texture has holes
+    c.translate(x, y);
+    c.rotate(rot);
+    final bi = im.ball;
+    c.drawImageRect(bi, ui.Rect.fromLTWH(0, 0, bi.width.toDouble(), bi.height.toDouble()), ui.Rect.fromCircle(center: ui.Offset.zero, radius: r * 1.04), _img);
+    c.restore();
+    // sphere shading: darker rim, light from top-left, specular
+    _fill.shader = ui.Gradient.radial(ctr.translate(-r * .3, -r * .35), r * 1.45, const [ui.Color(0x00000000), ui.Color(0x00000000), ui.Color(0x47000000), ui.Color(0x8c000000)], const [0, .45, .8, 1]);
+    c.drawCircle(ctr, r, _fill);
+    _fill.shader = ui.Gradient.radial(ctr.translate(-r * .38, -r * .42), r * .55, const [ui.Color(0xb3ffffff), ui.Color(0x26ffffff), ui.Color(0x00ffffff)], const [0, .45, 1]);
+    c.drawCircle(ctr.translate(-r * .38, -r * .42), r * .55, _fill);
+    _fill.shader = null;
+    _stroke
+      ..blendMode = ui.BlendMode.srcOver
+      ..strokeWidth = math.max(.8, r * .07)
+      ..color = const ui.Color(0x8c1a1d24);
+    c.drawCircle(ctr, r, _stroke);
+  }
+
+  void _drawBallShader(ui.Canvas c, ui.FragmentShader sh, double x, double y, double r, double shx, double shy) {
+    final b = e.ball;
     var sx = v.ox + shx + x * v.s, sy = v.oy + shy + y * v.s;
     final Rm = b.R;
     if (v.flipped) {
@@ -440,15 +508,24 @@ class MatchRenderer {
     }
   }
 
+  // v4 goals with HEIGHT: a top-down camera above the centre spot sees raised parts lean outward, so the crossbar,
+  // the back bar and the post tops are drawn lifted by [_goalH] along the goal's outward direction (render only; the
+  // collision geometry of e.goals is untouched). Posts cast shadows on the grass, the net has a floor, side walls,
+  // a back wall and a raised roof.
+  static const double _goalH = 30;
+  ui.Offset _lift(double x, double y, double d, double h) => ui.Offset(x + (x - e.CX) * h * .0022, y + d * h);
+
   void _netInto(ui.Canvas c, int i, double t, bool anim) {
     final g = e.goals[i];
     final d = g.d.toDouble(), x1 = g.x1 - POST_R, x2 = g.x2 + POST_R, D = e.DEPTH + 6, y0 = g.y, yb = g.y + d * D;
     final inset = (x2 - x1) * .045, bx1 = x1 + inset, bx2 = x2 - inset;
     final sx = anim ? math.sin(t * 40) * 6 * e.shake[i] : 0.0;
     final rp = anim ? e.ripple[i] : 0.0, rx = e.rippleX[i];
+    const H = _goalH, HB = _goalH * .82;
     double bulge(double x, double k) => rp > 0 ? d * rp * 16 * k * math.exp(-math.pow((x - rx) / 70, 2)) * (1 + .35 * math.sin(t * 22)) : 0;
     c.save();
     c.translate(sx, 0);
+    // floor
     _path
       ..reset()
       ..moveTo(x1, y0)
@@ -456,64 +533,125 @@ class MatchRenderer {
       ..lineTo(bx2, yb)
       ..lineTo(bx1, yb)
       ..close();
-    _fill.shader = ui.Gradient.linear(ui.Offset(0, y0), ui.Offset(0, yb), const [ui.Color(0x2e000000), ui.Color(0x80000000)]);
+    _fill.shader = ui.Gradient.linear(ui.Offset(0, y0), ui.Offset(0, yb), const [ui.Color(0x38000000), ui.Color(0x8c000000)]);
     c.drawPath(_path, _fill);
     _fill.shader = null;
+    // frame shadow cast on the grass (light from the top-left -> shadow to the bottom-right)
+    const shx = H * .55, shy = H * .42;
+    _netP
+      ..strokeWidth = POST_R * 1.6
+      ..color = const ui.Color(0x6b000000);
+    c.drawLine(ui.Offset(x1 + shx, y0 + shy), ui.Offset(x2 + shx, y0 + shy), _netP);
+    c.drawLine(ui.Offset(x1, y0), ui.Offset(x1 + shx, y0 + shy), _netP);
+    c.drawLine(ui.Offset(x2, y0), ui.Offset(x2 + shx, y0 + shy), _netP);
+    // raised outline points
+    final f1 = _lift(x1, y0, d, H), f2 = _lift(x2, y0, d, H), r1 = _lift(bx1, yb, d, HB), r2 = _lift(bx2, yb, d, HB);
+    // side walls + back wall (translucent panels)
+    _fill.color = const ui.Color(0x1fffffff);
+    for (final q in [
+      [ui.Offset(x1, y0), f1, r1, ui.Offset(bx1, yb)],
+      [ui.Offset(x2, y0), f2, r2, ui.Offset(bx2, yb)],
+      [ui.Offset(bx1, yb), r1, r2, ui.Offset(bx2, yb)],
+    ]) {
+      _path
+        ..reset()
+        ..addPolygon(q, true);
+      c.drawPath(_path, _fill);
+    }
+    _netP
+      ..strokeWidth = 1.1
+      ..color = const ui.Color(0x38ffffff);
+    // back-wall verticals
+    final nb = math.max(6, ((bx2 - bx1) / 22).round());
+    for (var k = 0; k <= nb; k++) {
+      final u = k / nb, gx = bx1 + (bx2 - bx1) * u;
+      c.drawLine(ui.Offset(gx, yb), ui.Offset.lerp(r1, r2, u)!, _netP);
+    }
+    // side-wall diagonals
+    for (var j = 1; j < 6; j++) {
+      final vv = j / 6;
+      c.drawLine(ui.Offset(x1 + (bx1 - x1) * vv, y0 + (yb - y0) * vv), ui.Offset.lerp(f1, r1, vv)!, _netP);
+      c.drawLine(ui.Offset(x2 + (bx2 - x2) * vv, y0 + (yb - y0) * vv), ui.Offset.lerp(f2, r2, vv)!, _netP);
+    }
+    // raised roof mesh
     final n = math.max(8, ((x2 - x1) / 18).round());
     _netP
       ..strokeWidth = 1.3
-      ..color = const ui.Color(0x42ffffff);
+      ..color = const ui.Color(0x4dffffff);
     for (var k = 0; k <= n; k++) {
-      final u = k / n, fx = x1 + (x2 - x1) * u, bx = bx1 + (bx2 - bx1) * u;
+      final u = k / n, fa = ui.Offset.lerp(f1, f2, u)!, ra = ui.Offset.lerp(r1, r2, u)!;
       _path
         ..reset()
-        ..moveTo(fx, y0);
+        ..moveTo(fa.dx, fa.dy);
       for (var j = 1; j <= 6; j++) {
-        final vv = j / 6, x = fx + (bx - fx) * vv;
-        _path.lineTo(x, y0 + d * D * vv + bulge(x, math.sin(vv * math.pi)));
+        final vv = j / 6, p = ui.Offset.lerp(fa, ra, vv)!;
+        _path.lineTo(p.dx, p.dy + bulge(p.dx, math.sin(vv * math.pi)));
       }
       c.drawPath(_path, _netP);
     }
     for (var j = 1; j <= 7; j++) {
-      final vv = math.pow(j / 7, .85).toDouble(), xa = x1 + (bx1 - x1) * vv, xb = x2 + (bx2 - x2) * vv, y = y0 + d * D * vv;
+      final vv = math.pow(j / 7, .85).toDouble(), pa = ui.Offset.lerp(f1, r1, vv)!, pb = ui.Offset.lerp(f2, r2, vv)!;
       _path
         ..reset()
-        ..moveTo(xa, y);
+        ..moveTo(pa.dx, pa.dy);
       for (var k = 1; k <= 12; k++) {
-        final x = xa + (xb - xa) * k / 12;
-        _path.lineTo(x, y + bulge(x, math.sin(vv * math.pi)));
+        final p = ui.Offset.lerp(pa, pb, k / 12)!;
+        _path.lineTo(p.dx, p.dy + bulge(p.dx, math.sin(vv * math.pi)));
       }
       c.drawPath(_path, _netP);
     }
+    // roof edges + back bar (raised) and the ground back line
     _netP
       ..strokeWidth = 3
-      ..color = const ui.Color(0x80ffffff);
-    c.drawLine(ui.Offset(x1, y0), ui.Offset(bx1, yb), _netP);
-    c.drawLine(ui.Offset(x2, y0), ui.Offset(bx2, yb), _netP);
+      ..color = const ui.Color(0x8cffffff);
+    c.drawLine(f1, r1, _netP);
+    c.drawLine(f2, r2, _netP);
+    _netP
+      ..strokeWidth = 2
+      ..color = const ui.Color(0x59ffffff);
+    c.drawLine(ui.Offset(bx1, yb), ui.Offset(bx2, yb), _netP);
+    c.drawLine(ui.Offset(bx1, yb), r1, _netP);
+    c.drawLine(ui.Offset(bx2, yb), r2, _netP);
     _netP
       ..strokeWidth = 4.5
-      ..color = const ui.Color(0xb3e8edf5);
-    c.drawLine(ui.Offset(bx1, yb), ui.Offset(bx2, yb), _netP);
+      ..color = const ui.Color(0xbfe8edf5);
+    c.drawLine(r1, r2, _netP);
     c.restore();
   }
 
   void _drawFrames(ui.Canvas c, double t) {
+    const W = POST_R * 1.7, H = _goalH;
     for (var i = 0; i < 2; i++) {
       final g = e.goals[i];
+      final d = g.d.toDouble();
       final sx = math.sin(t * 40) * 6 * e.shake[i], y = g.y, x1 = g.x1 + sx, x2 = g.x2 + sx;
-      const W = POST_R * 1.6;
-      _bar
-        ..strokeWidth = W
-        ..shader = null
-        ..color = const ui.Color(0x55000000);
-      c.drawLine(ui.Offset(x1 + 5, y + 7), ui.Offset(x2 + 5, y + 7), _bar);
-      _bar.shader = ui.Gradient.linear(ui.Offset(0, y - W / 2), ui.Offset(0, y + W / 2),
+      final t1 = _lift(x1, y, d, H), t2 = _lift(x2, y, d, H);
+      // contact shadow at the post bases
+      _fill.color = const ui.Color(0x66000000);
+      c.drawCircle(ui.Offset(x1 + 3, y + 3), POST_R * 1.25, _fill);
+      c.drawCircle(ui.Offset(x2 + 3, y + 3), POST_R * 1.25, _fill);
+      // posts: base -> raised top, shaded across their width (light from the left)
+      for (final (b0, tp) in [(ui.Offset(x1, y), t1), (ui.Offset(x2, y), t2)]) {
+        _bar
+          ..strokeWidth = W
+          ..shader = ui.Gradient.linear(ui.Offset(b0.dx - W / 2, 0), ui.Offset(b0.dx + W / 2, 0),
+              const [ui.Color(0xff7a8292), ui.Color(0xffffffff), ui.Color(0xffd9dee7), ui.Color(0xff596173)], const [0, .3, .62, 1]);
+        c.drawLine(b0, tp, _bar);
+        _fill.shader = ui.Gradient.radial(b0.translate(-POST_R * .3, -POST_R * .3), POST_R * 1.2, const [ui.Color(0xffd0d6df), ui.Color(0xff8e96a6), ui.Color(0xff4a5162)], const [0, .55, 1]);
+        c.drawCircle(b0, POST_R, _fill);
+      }
+      // crossbar (raised), with a bright highlight line on its upper edge
+      _bar.shader = ui.Gradient.linear(ui.Offset(0, t1.dy - W / 2), ui.Offset(0, t1.dy + W / 2),
           const [ui.Color(0xff8d96a6), ui.Color(0xffffffff), ui.Color(0xffdfe5ee), ui.Color(0xff6c7484)], const [0, .35, .6, 1]);
-      c.drawLine(ui.Offset(x1, y), ui.Offset(x2, y), _bar);
-      _bar.shader = null;
-      for (final px in [x1, x2]) {
-        _fill.shader = ui.Gradient.radial(ui.Offset(px - POST_R * .35, y - POST_R * .4), POST_R * 1.25, const [ui.Color(0xffffffff), ui.Color(0xffd5dbe5), ui.Color(0xff5d6575)], const [0, .5, 1]);
-        c.drawCircle(ui.Offset(px, y), POST_R + 1, _fill);
+      c.drawLine(t1, t2, _bar);
+      _bar
+        ..shader = null
+        ..strokeWidth = 1.6
+        ..color = const ui.Color(0xe6ffffff);
+      c.drawLine(t1.translate(0, -W * .22), t2.translate(0, -W * .22), _bar);
+      for (final tp in [t1, t2]) {
+        _fill.shader = ui.Gradient.radial(tp.translate(-POST_R * .35, -POST_R * .4), POST_R * 1.25, const [ui.Color(0xffffffff), ui.Color(0xffd5dbe5), ui.Color(0xff5d6575)], const [0, .5, 1]);
+        c.drawCircle(tp, POST_R + 1, _fill);
       }
       _fill.shader = null;
     }
@@ -541,8 +679,11 @@ class MatchRenderer {
     }
     var ul = math.sqrt(_aux * _aux + _auy * _auy);
     if (ul == 0) ul = 1;
-    final ux = _aux / ul, uy = _auy / ul, pw = _ap;
     final b = a.b!, team = b.team, r = b.r;
+    // v4: low accuracy -> the arrow wobbles (visual only; the real deviation is rolled in Engine.fire)
+    final wob = e.cfg.stats != null ? aimDevDeg(e.statsOf(team).accuracy) * .45 * math.pi / 180 * math.sin(t * 7.3) * (.4 + .6 * _ap) : 0.0;
+    final cw = math.cos(wob), sw = math.sin(wob);
+    final ux = (_aux * cw - _auy * sw) / ul, uy = (_aux * sw + _auy * cw) / ul, pw = _ap;
     // Nexora_godot (0c5c3a9): the arrow beyond the rim grows LINEARLY with power from a short stub
     // (AIM_MIN_K x r) to AIM_MAX_K x r; classic keeps the RN lengths.
     final shortLong = e.godot;

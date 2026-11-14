@@ -40,7 +40,7 @@ Future<MatchImages> loadMatchImages(MatchCfg cfg, Team t0, Team t1) async {
   final f = kFields[cfg.field];
   final r = await Future.wait([
     loadImage(kFIELD_IMG[f.id]!, width: 1100),
-    loadImage(ballImg(cfg.ball), width: 256),
+    loadImage(ballImg(cfg.ball), width: 256).catchError((_) => proceduralBall()),
     loadImage(teamImg(t0), width: 192),
     loadImage(teamImg(t1), width: 192),
     loadImage(kARROW_IMG['head_e']!),
@@ -117,7 +117,7 @@ class _MatchScreenState extends State<MatchScreen> {
     final s = _size, im = _im;
     if (s == null || im == null) return;
     final v = computeView(eng, s.width, s.height, _ins.top + 86, _ins.bottom + 22);
-    final r = MatchRenderer(eng, im, widget.cfg.ball, v, dpr: ui.PlatformDispatcher.instance.views.first.devicePixelRatio, hq: hq, ballShader: await ballShader());
+    final r = MatchRenderer(eng, im, widget.cfg.ball, v, dpr: ui.PlatformDispatcher.instance.views.first.devicePixelRatio, hq: hq, ballShader: MatchRenderer.useBallShader ? await ballShader() : null);
     await r.prepare();
     game.r = r;
   }

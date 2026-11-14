@@ -2,14 +2,15 @@
 import 'package:flutter/widgets.dart';
 
 class C {
-  static const bg = Color(0xff030614);
+  static const bg = Color(0xff050a26);
   static const bg2 = Color(0xff060b22);
   static const panel = Color(0xc70e163a);
   static const panel2 = Color(0xe6080c22);
   static const glass = Color(0x9e0e1840);
-  static const line = Color(0x3d6eaaff);
-  static const lineHi = Color(0xbf78dcff);
-  static const cyan = Color(0xff4fe3ff);
+  static const line = Color(0x47ff8a2a); // v4: orange neon hairline (was 0x3d6eaaff)
+  static const lineHi = Color(0xccff9a4a);
+  static const cyan = Color(0xffffa54a); // v4 accent: neon amber-orange (v3 cyan 0xff4fe3ff)
+  static const cyanOld = Color(0xff4fe3ff);
   static const sky = Color(0xff7fc8ff);
   static const blue = Color(0xff3b82ff);
   static const indigo = Color(0xff6d5bff);
@@ -36,7 +37,7 @@ class F {
 }
 
 class G {
-  static const primary = [C.cyan, Color(0xff5b8cff), C.violet];
+  static const primary = [Color(0xffffb15a), Color(0xffff7a2a), Color(0xffff4d1f)];
   static const gold = [Color(0xff8a5200), Color(0xffd39420), Color(0xffffe08a)];
   static const green = [Color(0xff0a6b4a), Color(0xff16b77a), Color(0xff5dffbf)];
   static const red = [Color(0xff5a0f24), Color(0xffa3203f), Color(0xffff5b74)];

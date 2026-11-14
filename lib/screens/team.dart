@@ -7,9 +7,11 @@ import 'package:material_ui/material_ui.dart';
 
 import '../core/assets.dart';
 import '../core/sound.dart';
+import '../core/owned.dart';
 import '../core/store.dart';
 import '../core/theme.dart';
 import '../game/data.dart';
+import '../game/engine.dart' show powerMul, aimDevDeg, aimPreview;
 import '../net/auth.dart';
 import '../net/discs.dart';
 import '../ui/chrome.dart';
@@ -92,13 +94,30 @@ class _DiscsState extends State<_Discs> {
   }
 
   Future<void> act() async {
-    final dz = Discs.i, ft = teamById(focus);
+    final dz = Discs.i, ft = teamById(focus), p0 = Store.i.p;
     if (busy) return;
-    if (dz.has(ft.id)) {
+    if (ownsTeam(ft.id)) {
       Store.i.set((q) => q.team = ft.id);
       buzz('success');
       toast('${ft.name} انتخاب شد', 'ok');
       if (Auth.i.uid != null) dz.equip(ft.id).then((r) => r.$1 ? null : toast(r.$2!, 'err'));
+      return;
+    }
+    final (cost, gemsCur) = teamCost(ft);
+    if (!gemsCur) {
+      if (p0.coins < cost) {
+        toast('سکه کافی نداری', 'err');
+        buzz('medium');
+        return;
+      }
+      Store.i.set((q) {
+        q.coins -= cost;
+        q.ownedTeams = [...q.ownedTeams, ft.id];
+        q.team = ft.id;
+      });
+      sfx(Snd.win);
+      buzz('success');
+      toast('${ft.name} باز شد!', 'ok');
       return;
     }
     setState(() => busy = true);
@@ -132,10 +151,9 @@ class _DiscsState extends State<_Discs> {
   @override
   Widget build(BuildContext context) {
     final dz = Discs.i, p = Store.i.p, w = MediaQuery.sizeOf(context).width;
-    final ft = teamById(focus), owned = dz.has(ft.id);
-    final price = dz.catalog[ft.id]?.priceGems ?? (dz.isFree(ft.id) ? 0 : teamPrice(ft));
+    final ft = teamById(focus), owned = ownsTeam(ft.id);
+    final (price, gemCur) = teamCost(ft);
     final ds = dz.stats(ft.id), rr = kRarity[rarity(ft)], rc = Color(rr.c);
-    final cs = cardStats(ft.id);
     final gems = Auth.i.profile?.i('gems') ?? 0;
     final cell = (w - 32 - 3 * 8) / 4;
     final l = list;
@@ -178,9 +196,14 @@ class _DiscsState extends State<_Discs> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               StatBars(power: ds.power, accuracy: ds.accuracy),
               const SizedBox(height: 6),
+              // v4: the numbers that really change play (Engine: powerMul / aimDevDeg / aimPreview)
               Row(textDirection: TextDirection.rtl, children: [
-                for (final (l, v) in [('کنترل', cs.control), ('سرعت', cs.speed), ('چرخش', cs.spin)])
-                  Expanded(child: Column(children: [T(l, size: 10, color: C.dim), T(fa(v), size: 13, family: F.num, weight: 700)])),
+                for (final (l, v) in [
+                  ('ضربه', '×${powerMul(ds.power).toStringAsFixed(2)}'),
+                  ('انحراف', '±${aimDevDeg(ds.accuracy).toStringAsFixed(1)}°'),
+                  ('خط نشانه', '×${aimPreview(ds.accuracy).toStringAsFixed(2)}'),
+                ])
+                  Expanded(child: Column(children: [T(l, size: 10, color: C.dim), T(v, size: 13, family: F.num, weight: 700)])),
               ]),
               const SizedBox(height: 6),
               const T('قدرت = سرعت بیشینه‌ی ضربه · دقت = انحراف کمتر و پیش‌نمایش مسیر بلندتر', size: 10, color: C.dim, align: TextAlign.right),
@@ -189,7 +212,8 @@ class _DiscsState extends State<_Discs> {
                   ? const Btn('انتخاب‌شده ✓', small: true, colors: G.dark, disabled: true)
                   : owned
                       ? Btn('انتخاب این دیسک', small: true, onTap: act)
-                      : Btn(busy ? '…' : 'خرید · 💎 ${fa(price)}', sub: Auth.i.profile != null ? 'موجودی: ${fa(gems)} الماس' : null, small: true, colors: G.violet, onTap: act, disabled: busy),
+                      : Btn(busy ? '…' : gemCur ? 'خرید · 💎 ${fa(price)}' : 'خرید · 🪙 ${fa(price)}',
+                          sub: gemCur ? (Auth.i.profile != null ? 'موجودی: ${fa(gems)} الماس' : null) : 'موجودی: ${fa(p.coins)} سکه', small: true, colors: G.violet, onTap: act, disabled: busy),
             ]),
           ),
           SizedBox(
@@ -214,7 +238,7 @@ class _DiscsState extends State<_Discs> {
         sliver: SliverGrid(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, mainAxisSpacing: 8, crossAxisSpacing: 8, childAspectRatio: cell / (cell + 20)),
           delegate: SliverChildBuilderDelegate(childCount: l.length, (_, i) {
-            final t = l[i], own = dz.has(t.id), sel = t.id == focus, eq = t.id == p.team, c = Color(kRarity[rarity(t)].c);
+            final t = l[i], own = ownsTeam(t.id), sel = t.id == focus, eq = t.id == p.team, c = Color(kRarity[rarity(t)].c);
             return Press(
               onTap: () => setState(() => focus = t.id),
               scaleTo: .92,
@@ -229,7 +253,7 @@ class _DiscsState extends State<_Discs> {
                       else if (own)
                         const T(' ', size: 9)
                       else
-                        Row(mainAxisSize: MainAxisSize.min, children: [Img(ui2('x_gem'), w: 12, h: 12), T(' ${dz.price(t.id)}', size: 8, family: F.head, weight: 700, color: const Color(0xff9fd8ff))]),
+                        Row(mainAxisSize: MainAxisSize.min, children: [Img(teamCost(t).$2 ? ui2('x_gem') : ui2('c_coin'), w: 12, h: 12), T(' ${teamCost(t).$1}', size: 8, family: F.head, weight: 700, color: const Color(0xff9fd8ff))]),
                     ]),
                   ),
                   if (!own) const Positioned(top: 4, right: 4, child: Icon(Icons.lock_rounded, size: 11, color: C.dim)),
@@ -303,7 +327,7 @@ class _BallsState extends State<_Balls> {
   @override
   Widget build(BuildContext context) {
     final p = Store.i.p, w = MediaQuery.sizeOf(context).width;
-    final owned = p.ownedBalls.contains(fb), price = ballPrice(fb), eq = p.ball == fb, tr = kTrails[fb % kTrails.length].c;
+    final owned = ownsBall(fb), price = ballPrice(fb), eq = p.ball == fb, tr = kTrails[fb % kTrails.length].c;
     final cell = (w - 32 - 3 * 8) / 4;
     void act() {
       if (owned) {
@@ -358,7 +382,7 @@ class _BallsState extends State<_Balls> {
         sliver: SliverGrid(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, mainAxisSpacing: 8, crossAxisSpacing: 8, childAspectRatio: cell / (cell + 18)),
           delegate: SliverChildBuilderDelegate(childCount: 36, (_, i) {
-            final own = p.ownedBalls.contains(i), sel = i == fb, e = p.ball == i;
+            final own = ownsBall(i), sel = i == fb, e = p.ball == i;
             return Press(
               onTap: () => setState(() => fb = i),
               scaleTo: .92,
@@ -390,7 +414,7 @@ class _FieldsState extends State<_Fields> {
   @override
   Widget build(BuildContext context) {
     final p = Store.i.p, w = MediaQuery.sizeOf(context).width;
-    final owned = p.ownedFields.contains(ff), price = fieldPrice(ff), eq = p.field == ff;
+    final owned = ownsField(ff), price = fieldPrice(ff), eq = p.field == ff;
     final cell = (w - 32 - 2 * 10) / 3;
     void act() {
       if (owned) {
@@ -438,7 +462,7 @@ class _FieldsState extends State<_Fields> {
         sliver: SliverGrid(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: cell / ((cell - 16) * 1.33 + 40)),
           delegate: SliverChildBuilderDelegate(childCount: kFields.length, (_, i) {
-            final own = p.ownedFields.contains(i), sel = i == ff, e = p.field == i;
+            final own = ownsField(i), sel = i == ff, e = p.field == i;
             return Press(
               onTap: () => setState(() => ff = i),
               scaleTo: .94,

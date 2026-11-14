@@ -123,14 +123,16 @@ const kTuneGodot = PhysTune(
 const kTuneStars = PhysTune(
   name: 'stars',
   discR: 49, ballR: 27,
-  discM: 3, ballM: 1, // disc 3x the ball: a disc striking the ball sends it off at (1+e)*3/4 = 1.43x its speed
-  shotMax: 1900, discVmax: 2000, powerGodot: true, // full drag ~1120 px disc glide (~0.85 pitch length)
-  discFric: 900, discDrag: .6, // pucks: strong linear decel, full shot stops in ~1.6 s
-  ballFric: 380, ballDrag: .6, // ball: 2.4x less decel than a disc -> ~1.7x the glide for the same speed
+  // v4 retune (phone feedback 2026-11-14: "billiards ball, heavy Soccer Stars pucks"). v3 values in brackets.
+  discM: 4, ballM: 1, // [3] disc 4x the ball: a disc striking the ball sends it off at (1+e)*4/5 = 1.52x its speed
+  // power stat: 0.75..1.25 x (powerMul, +-25% across 1..10); discVmax above 1.25 x shotMax so it never saturates
+  shotMax: 1900, discVmax: 2400, powerGodot: false,
+  discFric: 1100, discDrag: .9, // [900, .6] heavier pucks: stop sooner
+  ballFric: 240, ballDrag: .35, // [380, .6] ball: ~4.6x less decel than a disc -> billiard glide
   vStop: 3, vSettle: 40, settleK: 2, vSafe: 4200, // gentle settle, no abrupt stop
   eDiscDisc: .88, eDiscBall: .90, discDiscK: 1, // equal-mass head-on: target gets 94% of the momentum
   eSoft: .5, vSoft: 120, // only very light touches are damped (anti-jitter)
-  eWallBall: .90, tWallBall: .98, // pool cushion: 0.9 normal, tangential nearly kept
+  eWallBall: .92, tWallBall: .99, // [.90, .98] lively pool cushion: 0.92 normal, tangential nearly kept
   eWallDisc: .55, tWallDisc: .85, // plastic puck on the rail: dead-ish bounce
   postR: 5, cornerNudge: 70,
   subPx: 4, subMax: 16, stepCap: 14, rollK: .6,

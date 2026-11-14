@@ -6,13 +6,13 @@ import 'package:material_ui/material_ui.dart';
 
 import '../core/assets.dart';
 import '../core/sound.dart';
+import '../core/owned.dart';
 import '../core/store.dart';
 import '../core/theme.dart';
 import '../game/data.dart';
 import '../game/meta.dart';
 import '../net/auth.dart';
 import '../net/discs.dart';
-import '../online/ui.dart';
 import '../ui/chrome.dart';
 import '../ui/kit.dart';
 import 'team.dart' show StatBars;
@@ -63,6 +63,46 @@ class _ShopScreenState extends State<ShopScreen> {
     toast('${it.name} باز شد!', 'ok');
   }
 
+  String tcat = 'vip';
+
+  bool _owns(Item it) => it.kind == ItemKind.ball ? ownsBall(it.idx) : it.kind == ItemKind.field ? ownsField(it.idx) : ownsTeam(it.id);
+
+  void _equip(Item it) {
+    Store.i.set((q) {
+      if (it.kind == ItemKind.ball) q.ball = it.idx;
+      if (it.kind == ItemKind.field) q.field = it.idx;
+      if (it.kind == ItemKind.team) q.team = it.id;
+    });
+    buzz('success');
+    toast('${it.name} انتخاب شد', 'ok');
+  }
+
+  void _equipTeam(Team t) {
+    Store.i.set((q) => q.team = t.id);
+    if (Auth.i.uid != null && Discs.i.catalog.containsKey(t.id)) Discs.i.equip(t.id);
+    buzz('success');
+    toast('${t.name} انتخاب شد', 'ok');
+  }
+
+  void _buyTeam(Team t) {
+    final (cost, gem) = teamCost(t);
+    if (gem) {
+      buyDisc(t.id, t.name);
+      return;
+    }
+    if (Store.i.p.coins < cost) {
+      toast('سکه کافی نداری', 'err');
+      return;
+    }
+    Store.i.set((q) {
+      q.coins -= cost;
+      q.ownedTeams = [...q.ownedTeams, t.id];
+      q.team = t.id;
+    });
+    sfx(Snd.goal);
+    toast('${t.name} باز شد!', 'ok');
+  }
+
   Future<void> buyDisc(String id, String name) => Discs.i.buyAndEquip(id, name, onEquipped: (id) {
         Store.i.set((q) => q.team = id);
         sfx(Snd.win);
@@ -80,11 +120,11 @@ class _ShopScreenState extends State<ShopScreen> {
           listenable: Listenable.merge([Store.i, Discs.i, Auth.i]),
           builder: (_, __) {
             final p = Store.i.p, dz = Discs.i;
-            final items = allItems(p), deals = dailyDeals(p);
+            final deals = dailyDeals(p);
             final legends = kTeams.where((t) => t.cat == 'leg').toList();
             final now = DateTime.now().millisecondsSinceEpoch, freeIn = (p.lastChest + kChestEvery - now).clamp(0, kChestEvery);
-            final gemDiscs = dz.catalog.values.where((d) => d.priceGems > 0 && !dz.owned.contains(d.id)).toList()..sort((a, b) => a.priceGems.compareTo(b.priceGems));
-            final list = items.where((i) => i.kind.name == kind).toList();
+            final list = allItems(p, all: true).where((i) => i.kind.name == kind).toList();
+            final shopTeams = [for (final t in kTeams) if (teamCost(t).$1 > 0) t];
             final cell = (w - 32 - 16) / 3;
             final hero = legends[(now ~/ 86400000) % legends.length];
             return ListView(padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 20), children: [
@@ -208,23 +248,33 @@ class _ShopScreenState extends State<ShopScreen> {
               else if (kind == 'team') ...[
                 if (Auth.i.profile == null)
                   const Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child: T('قیمت دیسک‌ها به الماس است؛ با ورود آنلاین (حتی مهمان) ۱۵۰ الماس هدیه می‌گیری.', size: 11, color: C.dim, align: TextAlign.right)),
+                // v4: the disc catalogue is the game's own team list (every entry has art + data and is playable);
+                // gem prices come from the online catalog when it sells the disc, otherwise coins.
+                SizedBox(
+                  height: 44,
+                  child: ListView(scrollDirection: Axis.horizontal, reverse: true, padding: const EdgeInsets.symmetric(horizontal: 8), children: [
+                    for (final c in kCats)
+                      if (shopTeams.any((t) => t.cat == c.k)) Chip2(c.name, on: tcat == c.k, onTap: () => setState(() => tcat = c.k)),
+                  ]),
+                ),
+                const SizedBox(height: 8),
                 _grid(cell, [
-                  for (final d in gemDiscs.take(60))
+                  for (final t in shopTeams.where((t) => t.cat == (shopTeams.any((x) => x.cat == tcat) ? tcat : shopTeams.first.cat)))
                     _Pedestal(
-                      onTap: () => buyDisc(d.id, d.name),
-                      color: _rc[d.priceGems >= 250 ? 3 : d.priceGems >= 180 ? 2 : 1],
-                      img: discImg(d.id),
+                      onTap: () => ownsTeam(t.id) ? _equipTeam(t) : _buyTeam(t),
+                      color: _rc[rarity(t)],
+                      img: teamImg(t),
                       cell: cell,
                       round: true,
-                      name: d.name,
-                      extra: StatBars(power: d.power, accuracy: d.accuracy, compact: true),
-                      price: _Price(v: d.priceGems, gem: true),
+                      name: p.team == t.id ? '● ${t.name}' : t.name,
+                      extra: StatBars(power: dz.stats(t.id).power, accuracy: dz.stats(t.id).accuracy, compact: true),
+                      price: _Price(v: teamCost(t).$1, gem: teamCost(t).$2),
                     ),
                 ]),
               ] else ...[
                 _grid(cell, [
-                  for (final it in list.take(60))
-                    _Pedestal(onTap: () => buy(it), color: _rc[it.rar], img: it.img, cell: cell, round: it.kind != ItemKind.field, name: it.name, price: _Price(v: it.price)),
+                  for (final it in list.take(80))
+                    _Pedestal(onTap: () => _owns(it) ? _equip(it) : buy(it), color: _rc[it.rar], img: it.img, cell: cell, round: it.kind != ItemKind.field, name: it.name, price: _Price(v: it.price)),
                 ]),
                 if (list.isEmpty) const EmptyState('همه‌چیز این بخش رو داری، اسطوره!'),
               ],

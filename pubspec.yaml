@@ -1,7 +1,7 @@
 name: nexora
 description: "NEXORA finger soccer: Flutter + Flame port."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.4.0+4
 
 environment:
   sdk: ^3.14.0
@@ -43,6 +43,8 @@ flutter:
     - assets/g/teams/
     - assets/g/ui/
     - assets/g/ui2/
+    - assets/g/v4/
+    - assets/g/v4/oracle_wave/
   fonts:
     - family: Orbitron
       fonts:

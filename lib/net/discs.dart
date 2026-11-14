@@ -9,6 +9,7 @@ import '../core/theme.dart';
 import '../game/data.dart';
 import '../game/engine.dart';
 import '../ui/chrome.dart';
+import '../core/owned.dart' show kUnlockAllShop;
 import 'auth.dart';
 import 'supabase.dart';
 
@@ -22,9 +23,8 @@ class DiscRow {
 }
 
 DiscStats _fallback(String id) {
-  final t = kTeams.where((x) => x.id == id).firstOrNull;
-  final base = t?.cat == 'leg' || t?.cat == 'vip' ? 8.0 : t?.cat == 'club' || t?.cat == 'nat' ? 5.0 : 6.0;
-  return DiscStats(base, base);
+  final (pw, ac) = teamStatsFor(id);
+  return DiscStats(pw, ac);
 }
 
 class Discs extends ChangeNotifier {
@@ -46,7 +46,7 @@ class Discs extends ChangeNotifier {
 
   int price(String id) => catalog[id]?.priceGems ?? 0;
   bool isFree(String id) => catalog[id] != null ? catalog[id]!.priceGems == 0 : RegExp(r'^(club|nat)\d+$').hasMatch(id) || id == 'elite0';
-  bool has(String id) => isFree(id) || owned.contains(id);
+  bool has(String id) => kUnlockAllShop || isFree(id) || owned.contains(id);
 
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();

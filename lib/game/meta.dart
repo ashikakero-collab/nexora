@@ -2,6 +2,7 @@
 import 'dart:math' as math;
 
 import '../core/assets.dart';
+import '../core/owned.dart';
 import '../core/store.dart';
 import 'data.dart';
 
@@ -39,14 +40,15 @@ class Item {
   int get idx => int.parse(id);
 }
 
-List<Item> allItems(Profile p) {
+/// Unowned priced items (deals / chests); [all] = every priced item, owned or not (shop catalogue, v4).
+List<Item> allItems(Profile p, {bool all = false}) {
   final out = <Item>[];
   // discs are bought with gems from the online catalog, not with coins
   for (var i = 0; i < 36; i++) {
-    if (ballPrice(i) > 0 && !p.ownedBalls.contains(i)) out.add(Item(ItemKind.ball, '$i', kBallNames[i], ballPrice(i), ballImg(i), ballPrice(i) > 140 ? 2 : 1));
+    if (ballPrice(i) > 0 && (all || !ownsBall(i))) out.add(Item(ItemKind.ball, '$i', kBallNames[i], ballPrice(i), ballImg(i), ballPrice(i) > 140 ? 2 : 1));
   }
   for (var i = 0; i < kFields.length; i++) {
-    if (fieldPrice(i) > 0 && !p.ownedFields.contains(i)) out.add(Item(ItemKind.field, '$i', kFields[i].name, fieldPrice(i), fieldThumb(i), fieldPrice(i) > 140 ? 2 : 1));
+    if (fieldPrice(i) > 0 && (all || !ownsField(i))) out.add(Item(ItemKind.field, '$i', kFields[i].name, fieldPrice(i), fieldThumb(i), fieldPrice(i) > 140 ? 2 : 1));
   }
   return out;
 }

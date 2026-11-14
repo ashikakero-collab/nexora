@@ -95,6 +95,14 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
     final c = cfgFromRoom(room0);
     Rec? cap(int t) => teamOf(link.players, t).firstOrNull;
     c.stats = [Discs.i.stats(cap(0) == null ? null : discOf(cap(0)!)), Discs.i.stats(cap(1) == null ? null : discOf(cap(1)!))];
+    // v4: each team lines up in its captain's formation (advertised in presence 'f'; 0 when unknown/older build).
+    // The host's snapshots stay authoritative for positions, so a peer that saw stale presence is corrected.
+    int formOf(int t) {
+      final uid = cap(t)?.s('user_id');
+      final f = uid == null ? null : (uid == link.me ? Store.i.p.form : link.online[uid]?.form);
+      return f != null && f >= 0 && f < kForms.length ? f : 0;
+    }
+    c.forms = [formOf(0), formOf(1)];
     return c;
   }();
   /// Physics profile of this match: host picks it at open (pickProfile), clients take it from the first
@@ -205,7 +213,7 @@ class _OnlineMatchScreenState extends State<OnlineMatchScreen> {
     final flipped = myTeam == 1;
     final top = _ins.top + 92, bot = _ins.bottom + 72;
     final v = computeView(eng, s.width, s.height, flipped ? bot : top, flipped ? top : bot, flipped: flipped);
-    final r = MatchRenderer(eng, im, cfg.ball, v, dpr: ui.PlatformDispatcher.instance.views.first.devicePixelRatio, hq: hq, ballShader: await ballShader());
+    final r = MatchRenderer(eng, im, cfg.ball, v, dpr: ui.PlatformDispatcher.instance.views.first.devicePixelRatio, hq: hq, ballShader: MatchRenderer.useBallShader ? await ballShader() : null);
     await r.prepare();
     game.r = r;
   }

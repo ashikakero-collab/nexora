@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/sound.dart';
+import '../core/store.dart';
 import '../net/supabase.dart';
 import 'voice.dart';
 
@@ -27,7 +28,8 @@ class ChatMsg {
 class Peer {
   final String name;
   final bool flutter;
-  const Peer(this.name, this.flutter);
+  final int? form; // v4: formation index advertised in presence ('f'), null for older builds
+  const Peer(this.name, this.flutter, [this.form]);
 }
 
 class RoomLink extends ChangeNotifier {
@@ -118,7 +120,7 @@ class RoomLink extends ChangeNotifier {
           final on = <String, Peer>{};
           for (final s in ps) {
             final pl = s.presences.isNotEmpty ? s.presences.first.payload : const <String, dynamic>{};
-            on[s.key] = Peer(pl['name']?.toString() ?? '', pl['c'] == 'fl');
+            on[s.key] = Peer(pl['name']?.toString() ?? '', pl['c'] == 'fl', pl['f'] is num ? (pl['f'] as num).toInt() : null);
           }
           for (final k in on.keys) {
             if (!_seen.contains(k)) {
@@ -142,7 +144,7 @@ class RoomLink extends ChangeNotifier {
             connected = true;
             notifyListeners();
             try {
-              await ch.track({'name': myName, 'c': 'fl', 'v': 2});
+              await ch.track({'name': myName, 'c': 'fl', 'v': 2, 'f': Store.i.p.form});
             } catch (_) {}
             refresh();
             if (_wasConnected) {

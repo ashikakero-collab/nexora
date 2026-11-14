@@ -10,6 +10,7 @@ import '../core/assets.dart';
 import '../core/sound.dart';
 import '../core/store.dart';
 import '../core/theme.dart';
+import 'v4.dart';
 
 final _faRe = RegExp(r'[\u0600-\u06FF]');
 bool isFa(String s) => _faRe.hasMatch(s);
@@ -146,31 +147,12 @@ class Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final a = accent ?? C.lineHi;
-    final noAccent = accent == Colors.transparent;
-    return Container(
-      width: width,
-      height: height,
-      margin: margin,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: glowOn ? a.withValues(alpha: .4) : C.line),
-        gradient: const LinearGradient(begin: Alignment(-1, -1), end: Alignment(-.3, 1), colors: [Color(0x9e22347c), Color(0xdb0c1234), Color(0xf006091c)]),
-        boxShadow: glowOn ? glow(a, 16, .5) : null,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: Stack(children: [
-          const Positioned.fill(
-              child: IgnorePointer(
-                  child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.center, colors: [Color(0x1affffff), Color(0x00ffffff)]))))),
-          if (!noAccent) Positioned(top: 0, left: 28, right: 28, height: 2, child: DecoratedBox(decoration: BoxDecoration(color: a.withValues(alpha: .9), borderRadius: BorderRadius.circular(2)))),
-          Padding(padding: padding, child: child),
-        ]),
-      ),
-    );
+    final rim = accent == null
+        ? N.rim
+        : accent == Colors.transparent
+            ? const [Color(0x88ff8a2a), Color(0x55ff4f9a), Color(0x664f7dff)]
+            : [accent!, Color.lerp(accent!, N.pink, .45)!];
+    return NeonPanel(width: width, height: height, margin: margin, padding: padding, radius: radius, rim: rim, glowOn: glowOn, child: child);
   }
 }
 
@@ -183,50 +165,20 @@ class Btn extends StatelessWidget {
   final String? sub;
   const Btn(this.label, {super.key, this.onTap, this.colors = G.primary, this.icon, this.small = false, this.disabled = false, this.sub, this.dark = false});
 
+  NeonKind get kind => identical(colors, G.gold)
+      ? NeonKind.gold
+      : identical(colors, G.green)
+          ? NeonKind.green
+          : identical(colors, G.red)
+              ? NeonKind.red
+              : identical(colors, G.dark)
+                  ? NeonKind.ghost
+                  : identical(colors, G.violet)
+                      ? NeonKind.violet
+                      : NeonKind.primary;
+
   @override
-  Widget build(BuildContext context) {
-    final r = small ? 14.0 : 18.0;
-    return Press(
-      onTap: onTap,
-      disabled: disabled,
-      child: Container(
-        height: small ? 44 : 58,
-        padding: EdgeInsets.symmetric(horizontal: small ? 16 : 22),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(r),
-          border: Border.all(color: const Color(0x59ffffff)),
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: colors),
-        ),
-        child: Stack(alignment: Alignment.center, children: [
-          Positioned(
-              top: 0,
-              left: -22,
-              right: -22,
-              height: small ? 22 : 30,
-              child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
-                      gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x61ffffff), Color(0x0fffffff), Color(0x00ffffff)])))),
-          Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
-            if (icon != null) Padding(padding: const EdgeInsets.only(right: 8), child: Img(icon!, w: small ? 20 : 24, h: small ? 20 : 24)),
-            Flexible(
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                T(label,
-                    size: small ? 14 : 18,
-                    family: F.title,
-                    weight: 900,
-                    spacing: small ? 1.5 : 3,
-                    lines: 1,
-                    color: dark ? const Color(0xff06122a) : Colors.white,
-                    shadows: dark ? null : const [Shadow(color: Color(0x73000000), blurRadius: 6)]),
-                if (sub != null) T(sub!, size: 10, color: const Color(0xd9ffffff), family: F.head, weight: 700, spacing: 1.5),
-              ]),
-            ),
-          ]),
-        ]),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => NeonButton(label, onTap: onTap, kind: kind, icon: icon, small: small, disabled: disabled, sub: sub);
 }
 
 class Pill extends StatelessWidget {
@@ -369,25 +321,7 @@ class Toggle extends StatelessWidget {
   final Color accent;
   const Toggle({super.key, required this.on, required this.onChange, this.accent = C.cyan});
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () {
-          sfx(Snd.ui);
-          buzz();
-          onChange(!on);
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          width: 54,
-          height: 30,
-          decoration: BoxDecoration(color: on ? accent : const Color(0x1fffffff), borderRadius: BorderRadius.circular(15)),
-          child: AnimatedAlign(
-            duration: const Duration(milliseconds: 260),
-            curve: Curves.easeOutBack,
-            alignment: on ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(margin: const EdgeInsets.all(3), width: 24, height: 24, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
-          ),
-        ),
-      );
+  Widget build(BuildContext context) => NeonToggle(on: on, onChange: onChange);
 }
 
 /// Section title: Persian title on the right, English caption, divider line.
@@ -398,17 +332,7 @@ class TitleBar extends StatelessWidget {
   final Widget? right;
   const TitleBar(this.s, {super.key, this.en, this.accent = C.cyan, this.right});
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 18, 16, 10),
-        child: Row(children: [
-          if (right != null) right!,
-          Expanded(child: Container(height: 1, margin: const EdgeInsets.symmetric(horizontal: 10), color: const Color(0x2e78b4ff))),
-          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            tBold(s, size: 16),
-            if (en != null) tHead(en!, size: 8, color: accent),
-          ]),
-        ]),
-      );
+  Widget build(BuildContext context) => NeonHeader(s, en: en, trailing: right);
 }
 
 class Section extends StatelessWidget {
@@ -449,7 +373,11 @@ class ListRow extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 56),
       margin: const EdgeInsets.fromLTRB(SP.l, 0, SP.l, SP.s),
       padding: const EdgeInsets.symmetric(horizontal: SP.m, vertical: 6),
-      decoration: BoxDecoration(color: const Color(0xd10a0e28), borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: C.line),
+          gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xe0121a48), Color(0xe8080d2c)]),
+        ),
       child: Row(textDirection: TextDirection.rtl, children: [
         if (leading != null) leading!,
         if (icon != null) Img(icon!, w: 28, h: 28),
@@ -609,91 +537,21 @@ class Enter extends StatelessWidget {
 enum SpaceTheme { base, win, lose, system, hub, stadium, holo }
 
 /// Deep-space backdrop: nebula + two scrolling star layers. One shared ticker, pre-baked images, RepaintBoundary.
-class Space extends StatefulWidget {
+class Space extends StatelessWidget {
   final SpaceTheme theme;
   final double dim;
   const Space({super.key, this.theme = SpaceTheme.base, this.dim = 0});
-  @override
-  State<Space> createState() => _SpaceState();
-}
-
-class _SpaceState extends State<Space> with SingleTickerProviderStateMixin {
-  late final AnimationController c = AnimationController(vsync: this, duration: const Duration(seconds: 120))..repeat();
-  static const _neb = {
-    SpaceTheme.base: 'neb_base', SpaceTheme.win: 'neb_win', SpaceTheme.lose: 'neb_lose', SpaceTheme.system: 'neb_system',
-  };
-  String get _src => switch (widget.theme) {
-        SpaceTheme.hub => ui2('home_bg'),
-        SpaceTheme.stadium => menu('bg_stadium'),
-        SpaceTheme.holo => menu('bg_holo'),
-        _ => ui(_neb[widget.theme]!),
+  static String art(SpaceTheme t) => switch (t) {
+        SpaceTheme.base => V4.bgSpace,
+        SpaceTheme.win => V4.bgPortal1,
+        SpaceTheme.lose => V4.bgPortal2,
+        SpaceTheme.system => V4.bgPortal3,
+        SpaceTheme.hub => V4.bgSpace,
+        SpaceTheme.stadium => V4.bgMode,
+        SpaceTheme.holo => V4.bgPortal4,
       };
   @override
-  void dispose() {
-    c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final d = widget.dim;
-    final dark = widget.theme == SpaceTheme.stadium || widget.theme == SpaceTheme.holo;
-    final size = MediaQuery.sizeOf(context);
-    return IgnorePointer(
-      child: RepaintBoundary(
-        child: Stack(fit: StackFit.expand, children: [
-          const ColoredBox(color: Color(0xff02030b)),
-          AnimatedSwitcher(duration: const Duration(milliseconds: 600), child: Img(_src, key: ValueKey(_src), w: size.width, h: size.height, fit: BoxFit.cover)),
-          if (hq) _Stars(c: c, src: ui('stars1'), speed: 1, opacity: .7),
-          if (hq) _Stars(c: c, src: ui('stars2'), speed: 2, opacity: .75),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: const [0, .45, 1],
-                colors: dark
-                    ? [Color.fromRGBO(5, 4, 14, (.55 + d).clamp(0, 1)), Color.fromRGBO(5, 4, 14, (.45 + d).clamp(0, 1)), Color.fromRGBO(5, 4, 14, (.82 + d).clamp(0, 1))]
-                    : [Color.fromRGBO(2, 4, 14, (.35 + d).clamp(0, 1)), Color.fromRGBO(2, 4, 14, d.clamp(0, 1)), Color.fromRGBO(2, 4, 14, (.55 + d).clamp(0, 1))],
-              ),
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
-}
-
-class _Stars extends StatelessWidget {
-  final AnimationController c;
-  final String src;
-  final double speed, opacity;
-  const _Stars({required this.c, required this.src, required this.speed, required this.opacity});
-  @override
-  Widget build(BuildContext context) {
-    const tile = 512.0;
-    return RepaintBoundary(
-      child: AnimatedBuilder(
-        animation: c,
-        builder: (_, __) {
-          final off = (c.value * speed * tile * 6) % tile;
-          return Opacity(
-            opacity: opacity,
-            child: ClipRect(
-              child: OverflowBox(
-                alignment: Alignment.topLeft,
-                maxHeight: double.infinity,
-                child: Transform.translate(
-                  offset: Offset(0, off - tile),
-                  child: Image(image: ResizeImage(AssetImage(src), width: 512), repeat: ImageRepeat.repeat, width: 4000, height: 4000, alignment: Alignment.topLeft, fit: BoxFit.none),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+  Widget build(BuildContext context) => SpaceBg(image: art(theme), dim: dim);
 }
 
 /// Small helper: a round disc/avatar image in a coloured ring.
@@ -718,7 +576,7 @@ class Spinner extends StatelessWidget {
   final double size;
   const Spinner({super.key, this.size = 28});
   @override
-  Widget build(BuildContext context) => SizedBox(width: size, height: size, child: const CircularProgressIndicator(strokeWidth: 3, color: C.cyan));
+  Widget build(BuildContext context) => SizedBox(width: size, height: size, child: const CircularProgressIndicator(strokeWidth: 3, color: N.orange));
 }
 
 class EmptyState extends StatelessWidget {
@@ -756,7 +614,7 @@ class NeonFrame extends StatelessWidget {
   final Color color;
   final double cut;
   final EdgeInsets padding;
-  const NeonFrame({super.key, required this.child, this.color = C.cyan, this.cut = 14, this.padding = const EdgeInsets.all(12)});
+  const NeonFrame({super.key, required this.child, this.color = N.orange, this.cut = 14, this.padding = const EdgeInsets.all(12)});
   @override
   Widget build(BuildContext context) => CustomPaint(painter: _FramePainter(color, cut), child: Padding(padding: padding, child: child));
 }

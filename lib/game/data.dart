@@ -106,6 +106,32 @@ CardStats cardStats(String seed) {
   return CardStats(60 + (h % 37), 55 + (s >> 6).remainder(42), 58 + (s >> 12).remainder(40), 50 + (s >> 18).remainder(46));
 }
 
+/// v4: deterministic per-team power/accuracy (1..10) so every disc plays differently. Pure function of the team
+/// id (same on every client, so online matches stay in sync); the online disc catalog overrides it when it has a row.
+(double, double) teamStatsFor(String id) {
+  String? cat;
+  for (final x in kTeams) {
+    if (x.id == id) {
+      cat = x.cat;
+      break;
+    }
+  }
+  final (lo, hi) = switch (cat) {
+    'leg' => (8.0, 10.0),
+    'vip' || 'nx' => (7.0, 9.5),
+    'elite' || 'emb' || 'chrome' => (5.5, 8.5),
+    'car' || 'lux' || 'spt' || 'motor' || 'sport' || 'fashion' => (5.0, 8.0),
+    _ => (3.5, 7.5), // club / nat
+  };
+  final h = hashStr('stats:$id');
+  final a = (h & 0xffff) / 0xffff, b = ((h >> 16) & 0xffff) / 0xffff;
+  // power and accuracy pull in opposite directions a little, so strong strikers are less precise
+  final pw = lo + (hi - lo) * a;
+  final ac = lo + (hi - lo) * (.65 * b + .35 * (1 - a));
+  double r1(double v) => (v * 10).round() / 10;
+  return (r1(pw), r1(ac));
+}
+
 int rarity(Team t) => t.cat == 'vip' || t.cat == 'leg'
     ? 3
     : t.cat == 'lux' || t.cat == 'car' || t.cat == 'emb' || t.cat == 'chrome'
