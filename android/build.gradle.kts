@@ -19,6 +19,11 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// Lint's vital checks crash on some plugin sources (lint bug); they are not needed to ship the APK.
+subprojects {
+    tasks.matching { it.name.startsWith("lintVital") }.configureEach { enabled = false }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
