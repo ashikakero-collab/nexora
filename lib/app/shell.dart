@@ -20,6 +20,7 @@ import '../core/theme.dart';
 import '../game/data.dart';
 import '../game/meta.dart';
 import '../intro/intro.dart';
+import '../intro/video_intro.dart';
 import '../net/auth.dart';
 import '../net/supabase.dart';
 import '../online/online_root.dart';
@@ -111,6 +112,16 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
   late final _DepthObserver _obs = _DepthObserver(depth);
   final tab = ValueNotifier<NavTab>(NavTab.home);
   bool intro = true;
+  bool _videoFailed = false; // v4: the video intro could not initialise -> Flutter cinematic fallback
+
+  void _introDone() {
+    setState(() => intro = false);
+    Oracle.i.greet();
+    onIntroDone();
+  }
+
+  /// hook run once the launch intro is over (first-run tutorial starts here)
+  void onIntroDone() {}
   bool _recoveryShown = false;
   Launch? launch;
   int matchKey = 0;
@@ -469,10 +480,9 @@ class _ShellState extends State<NexoraApp> with SingleTickerProviderStateMixin {
         ),
         if (intro)
           Positioned.fill(
-            child: Intro(onDone: () {
-              setState(() => intro = false);
-              Oracle.i.greet();
-            }),
+            child: Store.i.p.introVideo && !_videoFailed
+                ? VideoIntro(onDone: _introDone, onFail: () => setState(() => _videoFailed = true))
+                : Intro(onDone: _introDone),
           ),
       ]),
       ),

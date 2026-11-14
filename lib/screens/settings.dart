@@ -52,6 +52,7 @@ class _SettingsSheetState extends State<SettingsSheet> {
             toggle(kit('mega'), 'صداها', 'ضربه، گل، تماشاگر', p.sound, (q, v) => q.sound = v),
             toggle(kit('bell'), 'موسیقی', 'موسیقی منو', p.music, (q, v) => q.music = v),
             toggle(kit('gear'), 'لرزش', 'بازخورد لمسی هنگام برخورد', p.haptics, (q, v) => q.haptics = v),
+            toggle(kit('star'), 'ویدیوی اینترو', 'پخش ویدیوی معرفی NEXORA هنگام ورود (Intro video)', p.introVideo, (q, v) => q.introVideo = v),
             toggle(oracleImg('idle'), 'نمایش اوراکل', 'دستیار شناور، مربی بازی و راهنما', p.oracle, (q, v) => q.oracle = v),
             seg('بلندی صدا', null, Segment<double>(value: p.volume, onChange: (v) => Store.i.set((q) => q.volume = v), items: const [(.25, '۲۵٪'), (.5, '۵۰٪'), (.75, '۷۵٪'), (1.0, '۱۰۰٪')])),
             seg('کیفیت گرافیک', 'روی گوشی‌های ضعیف «روان» را انتخاب کن (بدون سایه، ستاره و ذرات اضافه)',

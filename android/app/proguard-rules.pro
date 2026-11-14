@@ -26,3 +26,7 @@
 
 # Keep annotations / generic signatures used by reflection-based serializers
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
+
+# video_player (androidx.media3 / ExoPlayer)
+-keep class androidx.media3.** { *; }
+-dontwarn androidx.media3.**

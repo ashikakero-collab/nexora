@@ -17,6 +17,7 @@ dependencies:
   permission_handler: ^13.0.2
   shared_preferences: ^2.5.6
   supabase_flutter: ^2.18.3
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
@@ -42,6 +43,7 @@ flutter:
     - assets/g/ui2/
     - assets/g/v4/
     - assets/g/v4/oracle_wave/
+    - assets/video/
   fonts:
     - family: Orbitron
       fonts:

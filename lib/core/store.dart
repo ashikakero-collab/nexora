@@ -32,6 +32,7 @@ class Profile {
   int goal = 0; // goal skin index (kGoalSkins)
   List<int> ownedGoals = [0];
   bool tutorialDone = false;
+  bool introVideo = true; // v4: play the two intro videos on launch (settings toggle)
 
   Profile();
 
@@ -55,7 +56,7 @@ class Profile {
         'aiLvl': aiLvl, 'limit': limit, 'turnTime': turnTime, 'cupsWon': cupsWon, 'winStreak': winStreak, 'bestStreak': bestStreak,
         'chests': chests, 'lastChest': lastChest, 'claimedAch': claimedAch, 'quality': quality, 'volume': volume,
         'oracle': oracle, 'oracleTour': oracleTour, 'fieldsV': fieldsV, 'debugOverlay': debugOverlay, 'lang': lang,
-        'goal': goal, 'ownedGoals': ownedGoals, 'tutorialV4': tutorialDone,
+        'goal': goal, 'ownedGoals': ownedGoals, 'tutorialV4': tutorialDone, 'introVideo': introVideo,
       };
 
   static Profile fromJson(Map<String, dynamic> j) {
@@ -104,6 +105,7 @@ class Profile {
     p.goal = i('goal', 0);
     if (j['ownedGoals'] is List) p.ownedGoals = (j['ownedGoals'] as List).whereType<num>().map((e) => e.toInt()).toList();
     p.tutorialDone = b('tutorialV4', false);
+    p.introVideo = b('introVideo', true);
     return migrate(p);
   }
 
