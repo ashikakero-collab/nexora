@@ -1,0 +1,74 @@
+name: nexora
+description: NEXORA — a connected cosmic digital universe (offline-first full pack).
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.2
+  shared_preferences: ^2.3.3
+  flame: ^1.22.0
+  supabase_flutter: ^2.15.4
+  livekit_client: 2.3.6
+  image_picker: 1.1.2
+  audioplayers: ^6.1.0
+  flutter_local_notifications: 17.2.4
+  timezone: ^0.9.4
+  video_player: 2.9.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/arcade/pedestals/
+    - assets/avatar/gear/
+    - assets/characters/oracle/
+    - assets/characters/oracle/emotes/
+    - assets/characters/oracle/poses/
+    - assets/games/backgammon/
+    - assets/games/billiards/
+    - assets/games/carrom/
+    - assets/games/bermuda/balls/
+    - assets/games/bermuda/fields/
+    - assets/games/bermuda/goals/
+    - assets/games/bermuda/sfx/
+    - assets/games/bermuda/teams/
+    - assets/games/bermuda/thumbs/
+    - assets/games/bermuda/ui/
+    - assets/games/finger_soccer/
+    - assets/games/finger_soccer/pucks/iso/
+    - assets/games/finger_soccer/pucks/thumb/
+    - assets/games/finger_soccer/pucks/top/
+    - assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/iso/
+    - assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/thumb/
+    - assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/top/
+    - assets/games/shared/discs/
+    - assets/progression/achievements/
+    - assets/progression/club_badges/
+    - assets/ui/holo_frames/
+    - assets/ui/kit/
+    - assets/worlds/hub/portals/
+    - assets/worlds/hub/props/
+    - assets/worlds/hub/props/set/
+    - assets/worlds/hub/ship/
+    - assets/worlds/personal_orbit/decor/
+    - assets/media/
+    - assets/ui/nx2/badges/
+    - assets/ui/nx2/bars/
+    - assets/ui/nx2/bg/
+    - assets/ui/nx2/boards/
+    - assets/ui/nx2/chests/
+    - assets/ui/nx2/frames/
+    - assets/ui/nx2/oracle/
+    - assets/ui/nx2/tiles/

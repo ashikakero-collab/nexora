@@ -1,0 +1,4111 @@
+[
+ {
+  "path": "assets/characters/oracle/avatar_user.webp",
+  "size_px": [
+   318,
+   360
+  ],
+  "suggested_logical_dp": [
+   106,
+   120
+  ],
+  "source": "user-provided: 141105.webp",
+  "category": "oracle",
+  "used_in_steps": [],
+  "note": "User-provided Oracle mascot; used for idle and welcome-wave poses."
+ },
+ {
+  "path": "assets/characters/oracle/poses/hero_wave.webp",
+  "size_px": [
+   382,
+   512
+  ],
+  "suggested_logical_dp": [
+   127,
+   171
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/idle.webp",
+  "size_px": [
+   191,
+   370
+  ],
+  "suggested_logical_dp": [
+   64,
+   123
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/calm.webp",
+  "size_px": [
+   253,
+   379
+  ],
+  "suggested_logical_dp": [
+   84,
+   126
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/happy.webp",
+  "size_px": [
+   249,
+   357
+  ],
+  "suggested_logical_dp": [
+   83,
+   119
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/present.webp",
+  "size_px": [
+   229,
+   345
+  ],
+  "suggested_logical_dp": [
+   76,
+   115
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/confused.webp",
+  "size_px": [
+   259,
+   357
+  ],
+  "suggested_logical_dp": [
+   86,
+   119
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/power.webp",
+  "size_px": [
+   232,
+   363
+  ],
+  "suggested_logical_dp": [
+   77,
+   121
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/cheer.webp",
+  "size_px": [
+   315,
+   399
+  ],
+  "suggested_logical_dp": [
+   105,
+   133
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/spin.webp",
+  "size_px": [
+   287,
+   338
+  ],
+  "suggested_logical_dp": [
+   96,
+   113
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/sleep.webp",
+  "size_px": [
+   247,
+   320
+  ],
+  "suggested_logical_dp": [
+   82,
+   107
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/craft.webp",
+  "size_px": [
+   230,
+   365
+  ],
+  "suggested_logical_dp": [
+   77,
+   122
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/poses/alert.webp",
+  "size_px": [
+   219,
+   309
+  ],
+  "suggested_logical_dp": [
+   73,
+   103
+  ],
+  "source": "139278.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/emotes/hero_front.webp",
+  "size_px": [
+   359,
+   512
+  ],
+  "suggested_logical_dp": [
+   120,
+   171
+  ],
+  "source": "139277.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/emotes/emote_idle.webp",
+  "size_px": [
+   211,
+   231
+  ],
+  "suggested_logical_dp": [
+   70,
+   77
+  ],
+  "source": "139277.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/emotes/emote_smile.webp",
+  "size_px": [
+   227,
+   196
+  ],
+  "suggested_logical_dp": [
+   76,
+   65
+  ],
+  "source": "139277.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/emotes/emote_point.webp",
+  "size_px": [
+   223,
+   186
+  ],
+  "suggested_logical_dp": [
+   74,
+   62
+  ],
+  "source": "139277.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/emotes/emote_wave.webp",
+  "size_px": [
+   221,
+   191
+  ],
+  "suggested_logical_dp": [
+   74,
+   64
+  ],
+  "source": "139277.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/emotes/emote_cheer.webp",
+  "size_px": [
+   247,
+   210
+  ],
+  "suggested_logical_dp": [
+   82,
+   70
+  ],
+  "source": "139277.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/emotes/emote_alert.webp",
+  "size_px": [
+   253,
+   198
+  ],
+  "suggested_logical_dp": [
+   84,
+   66
+  ],
+  "source": "139277.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/characters/oracle/hero_orbit.webp",
+  "size_px": [
+   936,
+   1024
+  ],
+  "suggested_logical_dp": [
+   312,
+   341
+  ],
+  "source": "139260.png",
+  "category": "oracle",
+  "used_in_steps": [
+   27,
+   11
+  ],
+  "note": "Hero art for Oracle intro, loading and Hub"
+ },
+ {
+  "path": "assets/worlds/hub/ship/nexora_cruiser_nx01.webp",
+  "size_px": [
+   1024,
+   570
+  ],
+  "suggested_logical_dp": [
+   341,
+   190
+  ],
+  "source": "139267.png",
+  "category": "hub",
+  "used_in_steps": [
+   10
+  ],
+  "note": "NEXORA CRUISER NX-01 for THE FIRST JOURNEY"
+ },
+ {
+  "path": "assets/worlds/hub/props/command_platform_octagon.webp",
+  "size_px": [
+   1024,
+   521
+  ],
+  "suggested_logical_dp": [
+   341,
+   174
+  ],
+  "source": "139246.jpg",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/command_platform_wide.webp",
+  "size_px": [
+   1024,
+   447
+  ],
+  "suggested_logical_dp": [
+   341,
+   149
+  ],
+  "source": "139248.jpg",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/command_desk_main.webp",
+  "size_px": [
+   1024,
+   436
+  ],
+  "suggested_logical_dp": [
+   341,
+   145
+  ],
+  "source": "139258.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/captain_chair_blue.webp",
+  "size_px": [
+   824,
+   1023
+  ],
+  "suggested_logical_dp": [
+   275,
+   341
+  ],
+  "source": "139262.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/captain_chair_navy.webp",
+  "size_px": [
+   667,
+   961
+  ],
+  "suggested_logical_dp": [
+   222,
+   320
+  ],
+  "source": "139254.jpg",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/portals/arcade_gate_large.webp",
+  "size_px": [
+   1024,
+   681
+  ],
+  "suggested_logical_dp": [
+   341,
+   227
+  ],
+  "source": "139270.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   18
+  ],
+  "note": "Large entrance scene for Arcade"
+ },
+ {
+  "path": "assets/worlds/hub/props/podium_hologram.webp",
+  "size_px": [
+   1024,
+   926
+  ],
+  "suggested_logical_dp": [
+   341,
+   309
+  ],
+  "source": "139276.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   18
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/command_desk.webp",
+  "size_px": [
+   512,
+   289
+  ],
+  "suggested_logical_dp": [
+   171,
+   96
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/holo_chamber.webp",
+  "size_px": [
+   320,
+   378
+  ],
+  "suggested_logical_dp": [
+   107,
+   126
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/orbital_globe.webp",
+  "size_px": [
+   343,
+   355
+  ],
+  "suggested_logical_dp": [
+   114,
+   118
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/holo_projector.webp",
+  "size_px": [
+   303,
+   368
+  ],
+  "suggested_logical_dp": [
+   101,
+   123
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/comms_terminal.webp",
+  "size_px": [
+   274,
+   364
+  ],
+  "suggested_logical_dp": [
+   91,
+   121
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/portal_door.webp",
+  "size_px": [
+   418,
+   385
+  ],
+  "suggested_logical_dp": [
+   139,
+   128
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/robotic_seat.webp",
+  "size_px": [
+   339,
+   363
+  ],
+  "suggested_logical_dp": [
+   113,
+   121
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/server_rack.webp",
+  "size_px": [
+   384,
+   367
+  ],
+  "suggested_logical_dp": [
+   128,
+   122
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/energy_core.webp",
+  "size_px": [
+   258,
+   244
+  ],
+  "suggested_logical_dp": [
+   86,
+   81
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/reactor_pod.webp",
+  "size_px": [
+   266,
+   224
+  ],
+  "suggested_logical_dp": [
+   89,
+   75
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/floor_pad.webp",
+  "size_px": [
+   398,
+   174
+  ],
+  "suggested_logical_dp": [
+   133,
+   58
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/cargo_crate.webp",
+  "size_px": [
+   312,
+   219
+  ],
+  "suggested_logical_dp": [
+   104,
+   73
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/props/set/info_kiosk.webp",
+  "size_px": [
+   216,
+   248
+  ],
+  "suggested_logical_dp": [
+   72,
+   83
+  ],
+  "source": "139268.png",
+  "category": "hub",
+  "used_in_steps": [
+   11
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/hub/portals/nova_gallery.webp",
+  "size_px": [
+   402,
+   489
+  ],
+  "suggested_logical_dp": [
+   134,
+   163
+  ],
+  "source": "139266.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   12
+  ],
+  "note": "Portal for world nova_gallery"
+ },
+ {
+  "path": "assets/worlds/hub/portals/orbit_network.webp",
+  "size_px": [
+   358,
+   492
+  ],
+  "suggested_logical_dp": [
+   119,
+   164
+  ],
+  "source": "139266.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   12
+  ],
+  "note": "Portal for world orbit_network"
+ },
+ {
+  "path": "assets/worlds/hub/portals/nexora_arcade.webp",
+  "size_px": [
+   395,
+   491
+  ],
+  "suggested_logical_dp": [
+   132,
+   164
+  ],
+  "source": "139266.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   12
+  ],
+  "note": "Portal for world nexora_arcade"
+ },
+ {
+  "path": "assets/worlds/hub/portals/oracle_core.webp",
+  "size_px": [
+   381,
+   489
+  ],
+  "suggested_logical_dp": [
+   127,
+   163
+  ],
+  "source": "139266.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   12
+  ],
+  "note": "Portal for world oracle_core"
+ },
+ {
+  "path": "assets/worlds/hub/portals/personal_orbit.webp",
+  "size_px": [
+   499,
+   488
+  ],
+  "suggested_logical_dp": [
+   166,
+   163
+  ],
+  "source": "139266.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   12
+  ],
+  "note": "Portal for world personal_orbit"
+ },
+ {
+  "path": "assets/worlds/hub/portals/social_station.webp",
+  "size_px": [
+   473,
+   504
+  ],
+  "suggested_logical_dp": [
+   158,
+   168
+  ],
+  "source": "139266.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   12
+  ],
+  "note": "Portal for world social_station"
+ },
+ {
+  "path": "assets/worlds/hub/portals/nexora_exchange.webp",
+  "size_px": [
+   462,
+   505
+  ],
+  "suggested_logical_dp": [
+   154,
+   168
+  ],
+  "source": "139266.png",
+  "category": "hub",
+  "used_in_steps": [
+   11,
+   12
+  ],
+  "note": "Portal for world nexora_exchange"
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_01.webp",
+  "size_px": [
+   220,
+   414
+  ],
+  "suggested_logical_dp": [
+   73,
+   138
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_02.webp",
+  "size_px": [
+   512,
+   286
+  ],
+  "suggested_logical_dp": [
+   171,
+   95
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_03.webp",
+  "size_px": [
+   496,
+   512
+  ],
+  "suggested_logical_dp": [
+   165,
+   171
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_04.webp",
+  "size_px": [
+   448,
+   244
+  ],
+  "suggested_logical_dp": [
+   149,
+   81
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_05.webp",
+  "size_px": [
+   344,
+   224
+  ],
+  "suggested_logical_dp": [
+   115,
+   75
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_06.webp",
+  "size_px": [
+   289,
+   220
+  ],
+  "suggested_logical_dp": [
+   96,
+   73
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_07.webp",
+  "size_px": [
+   512,
+   189
+  ],
+  "suggested_logical_dp": [
+   171,
+   63
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_frame_08.webp",
+  "size_px": [
+   65,
+   128
+  ],
+  "suggested_logical_dp": [
+   22,
+   43
+  ],
+  "source": "139261.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_sheet_a.webp",
+  "size_px": [
+   1168,
+   784
+  ],
+  "suggested_logical_dp": [
+   389,
+   261
+  ],
+  "source": "139251.jpg",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "Luminance-keyed (glow) sheet; use with BlendMode.plus/screen"
+ },
+ {
+  "path": "assets/ui/holo_frames/holo_sheet_b.webp",
+  "size_px": [
+   1168,
+   784
+  ],
+  "suggested_logical_dp": [
+   389,
+   261
+  ],
+  "source": "139252.jpg",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "Luminance-keyed (glow) sheet; use with BlendMode.plus/screen"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_01.webp",
+  "size_px": [
+   184,
+   80
+  ],
+  "suggested_logical_dp": [
+   61,
+   27
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_02.webp",
+  "size_px": [
+   180,
+   81
+  ],
+  "suggested_logical_dp": [
+   60,
+   27
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_03.webp",
+  "size_px": [
+   319,
+   109
+  ],
+  "suggested_logical_dp": [
+   106,
+   36
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_bar_04.webp",
+  "size_px": [
+   512,
+   112
+  ],
+  "suggested_logical_dp": [
+   171,
+   37
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (bar); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_05.webp",
+  "size_px": [
+   275,
+   197
+  ],
+  "suggested_logical_dp": [
+   92,
+   66
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_icon_06.webp",
+  "size_px": [
+   82,
+   91
+  ],
+  "suggested_logical_dp": [
+   27,
+   30
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (icon); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_panel_07.webp",
+  "size_px": [
+   512,
+   506
+  ],
+  "suggested_logical_dp": [
+   171,
+   169
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (panel); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_08.webp",
+  "size_px": [
+   487,
+   185
+  ],
+  "suggested_logical_dp": [
+   162,
+   62
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_panel_09.webp",
+  "size_px": [
+   512,
+   370
+  ],
+  "suggested_logical_dp": [
+   171,
+   123
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (panel); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_bar_10.webp",
+  "size_px": [
+   512,
+   113
+  ],
+  "suggested_logical_dp": [
+   171,
+   38
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (bar); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_panel_11.webp",
+  "size_px": [
+   388,
+   323
+  ],
+  "suggested_logical_dp": [
+   129,
+   108
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (panel); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_12.webp",
+  "size_px": [
+   77,
+   153
+  ],
+  "suggested_logical_dp": [
+   26,
+   51
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_13.webp",
+  "size_px": [
+   77,
+   151
+  ],
+  "suggested_logical_dp": [
+   26,
+   50
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_14.webp",
+  "size_px": [
+   72,
+   151
+  ],
+  "suggested_logical_dp": [
+   24,
+   50
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_element_15.webp",
+  "size_px": [
+   349,
+   137
+  ],
+  "suggested_logical_dp": [
+   116,
+   46
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (element); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/ui/kit/ui_bar_16.webp",
+  "size_px": [
+   512,
+   119
+  ],
+  "suggested_logical_dp": [
+   171,
+   40
+  ],
+  "source": "139281.png",
+  "category": "ui",
+  "used_in_steps": [
+   4,
+   12
+  ],
+  "note": "auto-named by size (bar); rename semantically in Step 04"
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/plant_bowl.webp",
+  "size_px": [
+   335,
+   368
+  ],
+  "suggested_logical_dp": [
+   112,
+   123
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/ring_sculpture.webp",
+  "size_px": [
+   273,
+   376
+  ],
+  "suggested_logical_dp": [
+   91,
+   125
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/crystal_cluster.webp",
+  "size_px": [
+   199,
+   375
+  ],
+  "suggested_logical_dp": [
+   66,
+   125
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/light_pillar.webp",
+  "size_px": [
+   128,
+   373
+  ],
+  "suggested_logical_dp": [
+   43,
+   124
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/satellite.webp",
+  "size_px": [
+   287,
+   297
+  ],
+  "suggested_logical_dp": [
+   96,
+   99
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/terrarium_globe.webp",
+  "size_px": [
+   329,
+   380
+  ],
+  "suggested_logical_dp": [
+   110,
+   127
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/spire_tower.webp",
+  "size_px": [
+   148,
+   381
+  ],
+  "suggested_logical_dp": [
+   49,
+   127
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/orb_rings.webp",
+  "size_px": [
+   300,
+   328
+  ],
+  "suggested_logical_dp": [
+   100,
+   109
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/crystal_arch.webp",
+  "size_px": [
+   302,
+   382
+  ],
+  "suggested_logical_dp": [
+   101,
+   127
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/tablet_stand.webp",
+  "size_px": [
+   220,
+   383
+  ],
+  "suggested_logical_dp": [
+   73,
+   128
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/dna_tube.webp",
+  "size_px": [
+   185,
+   389
+  ],
+  "suggested_logical_dp": [
+   62,
+   130
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/purple_tree_pot.webp",
+  "size_px": [
+   223,
+   398
+  ],
+  "suggested_logical_dp": [
+   74,
+   133
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/diamond_spinner.webp",
+  "size_px": [
+   220,
+   395
+  ],
+  "suggested_logical_dp": [
+   73,
+   132
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/curved_arch.webp",
+  "size_px": [
+   320,
+   420
+  ],
+  "suggested_logical_dp": [
+   107,
+   140
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/planet_globe.webp",
+  "size_px": [
+   221,
+   367
+  ],
+  "suggested_logical_dp": [
+   74,
+   122
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/worlds/personal_orbit/decor/banner.webp",
+  "size_px": [
+   133,
+   388
+  ],
+  "suggested_logical_dp": [
+   44,
+   129
+  ],
+  "source": "139279.png",
+  "category": "decor",
+  "used_in_steps": [
+   14,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/helmet.webp",
+  "size_px": [
+   293,
+   335
+  ],
+  "suggested_logical_dp": [
+   98,
+   112
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/jacket.webp",
+  "size_px": [
+   371,
+   364
+  ],
+  "suggested_logical_dp": [
+   124,
+   121
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/armor_vest.webp",
+  "size_px": [
+   359,
+   325
+  ],
+  "suggested_logical_dp": [
+   120,
+   108
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/glove.webp",
+  "size_px": [
+   243,
+   343
+  ],
+  "suggested_logical_dp": [
+   81,
+   114
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/boots.webp",
+  "size_px": [
+   386,
+   314
+  ],
+  "suggested_logical_dp": [
+   129,
+   105
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/backpack.webp",
+  "size_px": [
+   292,
+   314
+  ],
+  "suggested_logical_dp": [
+   97,
+   105
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/watch.webp",
+  "size_px": [
+   249,
+   284
+  ],
+  "suggested_logical_dp": [
+   83,
+   95
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/bracelet.webp",
+  "size_px": [
+   286,
+   180
+  ],
+  "suggested_logical_dp": [
+   95,
+   60
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/sunglasses.webp",
+  "size_px": [
+   419,
+   168
+  ],
+  "suggested_logical_dp": [
+   140,
+   56
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/visor_panel.webp",
+  "size_px": [
+   343,
+   216
+  ],
+  "suggested_logical_dp": [
+   114,
+   72
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/tiara.webp",
+  "size_px": [
+   398,
+   212
+  ],
+  "suggested_logical_dp": [
+   133,
+   71
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/headphones.webp",
+  "size_px": [
+   285,
+   257
+  ],
+  "suggested_logical_dp": [
+   95,
+   86
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/scarf.webp",
+  "size_px": [
+   244,
+   275
+  ],
+  "suggested_logical_dp": [
+   81,
+   92
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/belt.webp",
+  "size_px": [
+   290,
+   153
+  ],
+  "suggested_logical_dp": [
+   97,
+   51
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/planet_orb.webp",
+  "size_px": [
+   225,
+   253
+  ],
+  "suggested_logical_dp": [
+   75,
+   84
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/avatar/gear/crystal_shards.webp",
+  "size_px": [
+   175,
+   256
+  ],
+  "suggested_logical_dp": [
+   58,
+   85
+  ],
+  "source": "139274.png",
+  "category": "avatar",
+  "used_in_steps": [
+   9,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_explorer.webp",
+  "size_px": [
+   252,
+   328
+  ],
+  "suggested_logical_dp": [
+   84,
+   109
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_gamer.webp",
+  "size_px": [
+   237,
+   327
+  ],
+  "suggested_logical_dp": [
+   79,
+   109
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_champion.webp",
+  "size_px": [
+   247,
+   326
+  ],
+  "suggested_logical_dp": [
+   82,
+   109
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_team.webp",
+  "size_px": [
+   238,
+   317
+  ],
+  "suggested_logical_dp": [
+   79,
+   106
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_legend.webp",
+  "size_px": [
+   255,
+   328
+  ],
+  "suggested_logical_dp": [
+   85,
+   109
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_idea.webp",
+  "size_px": [
+   268,
+   259
+  ],
+  "suggested_logical_dp": [
+   89,
+   86
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_daily.webp",
+  "size_px": [
+   254,
+   255
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_star_elite.webp",
+  "size_px": [
+   277,
+   254
+  ],
+  "suggested_logical_dp": [
+   92,
+   85
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_summit.webp",
+  "size_px": [
+   228,
+   236
+  ],
+  "suggested_logical_dp": [
+   76,
+   79
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/badge_planet.webp",
+  "size_px": [
+   261,
+   258
+  ],
+  "suggested_logical_dp": [
+   87,
+   86
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/trophy_silver.webp",
+  "size_px": [
+   283,
+   512
+  ],
+  "suggested_logical_dp": [
+   94,
+   171
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/trophy_orb.webp",
+  "size_px": [
+   234,
+   512
+  ],
+  "suggested_logical_dp": [
+   78,
+   171
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/trophy_crown.webp",
+  "size_px": [
+   249,
+   512
+  ],
+  "suggested_logical_dp": [
+   83,
+   171
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/trophy_crystal.webp",
+  "size_px": [
+   216,
+   502
+  ],
+  "suggested_logical_dp": [
+   72,
+   167
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/achievements/trophy_wings.webp",
+  "size_px": [
+   291,
+   500
+  ],
+  "suggested_logical_dp": [
+   97,
+   167
+  ],
+  "source": "139275.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/carrom.webp",
+  "size_px": [
+   436,
+   373
+  ],
+  "suggested_logical_dp": [
+   145,
+   124
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/finger_soccer.webp",
+  "size_px": [
+   437,
+   374
+  ],
+  "suggested_logical_dp": [
+   146,
+   125
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/snakes_ladders.webp",
+  "size_px": [
+   428,
+   370
+  ],
+  "suggested_logical_dp": [
+   143,
+   123
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/quiz.webp",
+  "size_px": [
+   431,
+   388
+  ],
+  "suggested_logical_dp": [
+   144,
+   129
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/backgammon.webp",
+  "size_px": [
+   438,
+   387
+  ],
+  "suggested_logical_dp": [
+   146,
+   129
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/billiards.webp",
+  "size_px": [
+   422,
+   386
+  ],
+  "suggested_logical_dp": [
+   141,
+   129
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/uno.webp",
+  "size_px": [
+   434,
+   409
+  ],
+  "suggested_logical_dp": [
+   145,
+   136
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/ludo.webp",
+  "size_px": [
+   440,
+   409
+  ],
+  "suggested_logical_dp": [
+   147,
+   136
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/arcade/pedestals/mafia.webp",
+  "size_px": [
+   428,
+   419
+  ],
+  "suggested_logical_dp": [
+   143,
+   140
+  ],
+  "source": "139273.png",
+  "category": "arcade",
+  "used_in_steps": [
+   18,
+   19,
+   20,
+   21
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/progression/club_badges/badge_club_scorpion.webp",
+  "size_px": [
+   498,
+   506
+  ],
+  "suggested_logical_dp": [
+   166,
+   169
+  ],
+  "source": "137875.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": "grabCut matte from dark bg; check edges"
+ },
+ {
+  "path": "assets/progression/club_badges/badge_club_wolf.webp",
+  "size_px": [
+   490,
+   508
+  ],
+  "suggested_logical_dp": [
+   163,
+   169
+  ],
+  "source": "137875.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": "grabCut matte from dark bg; check edges"
+ },
+ {
+  "path": "assets/progression/club_badges/badge_club_yakuza.webp",
+  "size_px": [
+   497,
+   505
+  ],
+  "suggested_logical_dp": [
+   166,
+   168
+  ],
+  "source": "137875.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": "grabCut matte from dark bg; check edges"
+ },
+ {
+  "path": "assets/progression/club_badges/badge_club_monster.webp",
+  "size_px": [
+   501,
+   488
+  ],
+  "suggested_logical_dp": [
+   167,
+   163
+  ],
+  "source": "137875.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": "grabCut matte from dark bg; check edges"
+ },
+ {
+  "path": "assets/progression/club_badges/badge_club_bermuda.webp",
+  "size_px": [
+   497,
+   494
+  ],
+  "suggested_logical_dp": [
+   166,
+   165
+  ],
+  "source": "137875.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": "grabCut matte from dark bg; check edges"
+ },
+ {
+  "path": "assets/progression/club_badges/badge_club_stone.webp",
+  "size_px": [
+   497,
+   497
+  ],
+  "suggested_logical_dp": [
+   166,
+   166
+  ],
+  "source": "137875.png",
+  "category": "progression",
+  "used_in_steps": [
+   13,
+   22
+  ],
+  "note": "grabCut matte from dark bg; check edges"
+ },
+ {
+  "path": "assets/games/carrom/board_nx_black_gold.webp",
+  "size_px": [
+   1024,
+   1024
+  ],
+  "suggested_logical_dp": [
+   341,
+   341
+  ],
+  "source": "139193.png",
+  "category": "carrom",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Full-bleed square board. Playfield approx x,y 0.09..0.91"
+ },
+ {
+  "path": "assets/games/carrom/board_classic_wood.webp",
+  "size_px": [
+   1024,
+   1024
+  ],
+  "suggested_logical_dp": [
+   341,
+   341
+  ],
+  "source": "139186.png",
+  "category": "carrom",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Classic wood board; pockets at corners"
+ },
+ {
+  "path": "assets/games/backgammon/board_nx_gold.webp",
+  "size_px": [
+   1536,
+   1024
+  ],
+  "suggested_logical_dp": [
+   512,
+   341
+  ],
+  "source": "139196.png",
+  "category": "backgammon",
+  "used_in_steps": [
+   19
+  ],
+  "note": "Landscape board with hinge; two halves"
+ },
+ {
+  "path": "assets/games/billiards/table_green.webp",
+  "size_px": [
+   1024,
+   1536
+  ],
+  "suggested_logical_dp": [
+   341,
+   512
+  ],
+  "source": "139208.png",
+  "category": "billiards",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Portrait table; cloth approx x 0.10..0.90, y 0.06..0.94; 6 pockets"
+ },
+ {
+  "path": "assets/games/backgammon/checker_light.webp",
+  "size_px": [
+   248,
+   256
+  ],
+  "suggested_logical_dp": [
+   83,
+   85
+  ],
+  "source": "139200.png",
+  "category": "backgammon",
+  "used_in_steps": [
+   19
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/backgammon/checker_dark.webp",
+  "size_px": [
+   252,
+   256
+  ],
+  "suggested_logical_dp": [
+   84,
+   85
+  ],
+  "source": "139200.png",
+  "category": "backgammon",
+  "used_in_steps": [
+   19
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/backgammon/die_a.webp",
+  "size_px": [
+   240,
+   256
+  ],
+  "suggested_logical_dp": [
+   80,
+   85
+  ],
+  "source": "139200.png",
+  "category": "backgammon",
+  "used_in_steps": [
+   19
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/backgammon/die_b.webp",
+  "size_px": [
+   231,
+   256
+  ],
+  "suggested_logical_dp": [
+   77,
+   85
+  ],
+  "source": "139200.png",
+  "category": "backgammon",
+  "used_in_steps": [
+   19
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_cream.webp",
+  "size_px": [
+   192,
+   187
+  ],
+  "suggested_logical_dp": [
+   64,
+   62
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_black.webp",
+  "size_px": [
+   190,
+   181
+  ],
+  "suggested_logical_dp": [
+   63,
+   60
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_red.webp",
+  "size_px": [
+   185,
+   187
+  ],
+  "suggested_logical_dp": [
+   62,
+   62
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_cream_crown.webp",
+  "size_px": [
+   178,
+   187
+  ],
+  "suggested_logical_dp": [
+   59,
+   62
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_black_crown.webp",
+  "size_px": [
+   179,
+   181
+  ],
+  "suggested_logical_dp": [
+   60,
+   60
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_red_crown.webp",
+  "size_px": [
+   182,
+   187
+  ],
+  "suggested_logical_dp": [
+   61,
+   62
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_cream_star.webp",
+  "size_px": [
+   183,
+   187
+  ],
+  "suggested_logical_dp": [
+   61,
+   62
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_black_star.webp",
+  "size_px": [
+   190,
+   182
+  ],
+  "suggested_logical_dp": [
+   63,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_cream_spade.webp",
+  "size_px": [
+   186,
+   183
+  ],
+  "suggested_logical_dp": [
+   62,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_black_heart.webp",
+  "size_px": [
+   189,
+   183
+  ],
+  "suggested_logical_dp": [
+   63,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_red_club.webp",
+  "size_px": [
+   185,
+   183
+  ],
+  "suggested_logical_dp": [
+   62,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_cream_diamond.webp",
+  "size_px": [
+   178,
+   183
+  ],
+  "suggested_logical_dp": [
+   59,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_black_spade_white.webp",
+  "size_px": [
+   179,
+   183
+  ],
+  "suggested_logical_dp": [
+   60,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_red_club_white.webp",
+  "size_px": [
+   182,
+   183
+  ],
+  "suggested_logical_dp": [
+   61,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_cream_star_black.webp",
+  "size_px": [
+   181,
+   183
+  ],
+  "suggested_logical_dp": [
+   60,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/disc_black_star_gold.webp",
+  "size_px": [
+   189,
+   183
+  ],
+  "suggested_logical_dp": [
+   63,
+   61
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_compass.webp",
+  "size_px": [
+   214,
+   205
+  ],
+  "suggested_logical_dp": [
+   71,
+   68
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_fire.webp",
+  "size_px": [
+   190,
+   197
+  ],
+  "suggested_logical_dp": [
+   63,
+   66
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_galaxy.webp",
+  "size_px": [
+   188,
+   198
+  ],
+  "suggested_logical_dp": [
+   63,
+   66
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_soccer.webp",
+  "size_px": [
+   177,
+   197
+  ],
+  "suggested_logical_dp": [
+   59,
+   66
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_lion.webp",
+  "size_px": [
+   180,
+   197
+  ],
+  "suggested_logical_dp": [
+   60,
+   66
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_eagle.webp",
+  "size_px": [
+   186,
+   198
+  ],
+  "suggested_logical_dp": [
+   62,
+   66
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_dragon.webp",
+  "size_px": [
+   189,
+   199
+  ],
+  "suggested_logical_dp": [
+   63,
+   66
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/striker_wolf.webp",
+  "size_px": [
+   204,
+   200
+  ],
+  "suggested_logical_dp": [
+   68,
+   67
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_champion.webp",
+  "size_px": [
+   203,
+   256
+  ],
+  "suggested_logical_dp": [
+   68,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_football.webp",
+  "size_px": [
+   178,
+   256
+  ],
+  "suggested_logical_dp": [
+   59,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_lion_king.webp",
+  "size_px": [
+   176,
+   256
+  ],
+  "suggested_logical_dp": [
+   59,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_eagle_shield.webp",
+  "size_px": [
+   174,
+   256
+  ],
+  "suggested_logical_dp": [
+   58,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_red_shield.webp",
+  "size_px": [
+   168,
+   256
+  ],
+  "suggested_logical_dp": [
+   56,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_trophy.webp",
+  "size_px": [
+   170,
+   255
+  ],
+  "suggested_logical_dp": [
+   57,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_fireball.webp",
+  "size_px": [
+   186,
+   256
+  ],
+  "suggested_logical_dp": [
+   62,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/shared/discs/emblem_goal.webp",
+  "size_px": [
+   189,
+   256
+  ],
+  "suggested_logical_dp": [
+   63,
+   85
+  ],
+  "source": "139192.png",
+  "category": "shared",
+  "used_in_steps": [
+   20,
+   16
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_frost_b_iso.webp",
+  "size_px": [
+   384,
+   373
+  ],
+  "suggested_logical_dp": [
+   128,
+   124
+  ],
+  "source": "139165.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_frost_b_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "139165.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_frost_b_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "139165.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_noble_lion_iso.webp",
+  "size_px": [
+   384,
+   365
+  ],
+  "suggested_logical_dp": [
+   128,
+   122
+  ],
+  "source": "139164.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_noble_lion_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "139164.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_noble_lion_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "139164.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_cosmic_crown_iso.webp",
+  "size_px": [
+   384,
+   354
+  ],
+  "suggested_logical_dp": [
+   128,
+   118
+  ],
+  "source": "139161.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_cosmic_crown_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "139161.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_cosmic_crown_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "139161.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_eagle_gold_iso.webp",
+  "size_px": [
+   384,
+   368
+  ],
+  "suggested_logical_dp": [
+   128,
+   123
+  ],
+  "source": "139162.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_eagle_gold_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "139162.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_eagle_gold_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "139162.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_nx_green_iso.webp",
+  "size_px": [
+   384,
+   375
+  ],
+  "suggested_logical_dp": [
+   128,
+   125
+  ],
+  "source": "139163.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_nx_green_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "139163.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_nx_green_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "139163.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_royal_lion_iso.webp",
+  "size_px": [
+   384,
+   367
+  ],
+  "suggested_logical_dp": [
+   128,
+   122
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_royal_lion_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_royal_lion_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_tech_nx_iso.webp",
+  "size_px": [
+   384,
+   370
+  ],
+  "suggested_logical_dp": [
+   128,
+   123
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_tech_nx_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_tech_nx_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_dragon_fire_iso.webp",
+  "size_px": [
+   384,
+   367
+  ],
+  "suggested_logical_dp": [
+   128,
+   122
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_dragon_fire_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_dragon_fire_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_eagle_marble_iso.webp",
+  "size_px": [
+   384,
+   376
+  ],
+  "suggested_logical_dp": [
+   128,
+   125
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_eagle_marble_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_eagle_marble_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_frost_iso.webp",
+  "size_px": [
+   382,
+   384
+  ],
+  "suggested_logical_dp": [
+   127,
+   128
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_frost_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_frost_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/iso/puck_phoenix_purple_iso.webp",
+  "size_px": [
+   384,
+   375
+  ],
+  "suggested_logical_dp": [
+   128,
+   125
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview "
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/top/puck_phoenix_purple_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks/thumb/puck_phoenix_purple_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137874.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/iso/puck_nat_spain_iso.webp",
+  "size_px": [
+   384,
+   376
+  ],
+  "suggested_logical_dp": [
+   128,
+   125
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview LICENSED MARK - placeholder only"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/top/puck_nat_spain_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/thumb/puck_nat_spain_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/iso/puck_nat_portugal_iso.webp",
+  "size_px": [
+   384,
+   383
+  ],
+  "suggested_logical_dp": [
+   128,
+   128
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview LICENSED MARK - placeholder only"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/top/puck_nat_portugal_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/thumb/puck_nat_portugal_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/iso/puck_nat_england_iso.webp",
+  "size_px": [
+   384,
+   381
+  ],
+  "suggested_logical_dp": [
+   128,
+   127
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview LICENSED MARK - placeholder only"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/top/puck_nat_england_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/thumb/puck_nat_england_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/iso/puck_nat_japan_iso.webp",
+  "size_px": [
+   384,
+   374
+  ],
+  "suggested_logical_dp": [
+   128,
+   125
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview LICENSED MARK - placeholder only"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/top/puck_nat_japan_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/thumb/puck_nat_japan_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/iso/puck_nat_france_iso.webp",
+  "size_px": [
+   384,
+   377
+  ],
+  "suggested_logical_dp": [
+   128,
+   126
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview LICENSED MARK - placeholder only"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/top/puck_nat_france_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/thumb/puck_nat_france_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/iso/puck_nat_netherlands_iso.webp",
+  "size_px": [
+   384,
+   379
+  ],
+  "suggested_logical_dp": [
+   128,
+   126
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": "Isometric view for shop/preview LICENSED MARK - placeholder only"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/top/puck_nat_netherlands_top.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   85,
+   85
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Derived top-down face for gameplay (approximation; regenerate true top-down art later)"
+ },
+ {
+  "path": "assets/games/finger_soccer/pucks_PLACEHOLDER_LICENSED/thumb/puck_nat_netherlands_thumb.webp",
+  "size_px": [
+   96,
+   96
+  ],
+  "suggested_logical_dp": [
+   32,
+   32
+  ],
+  "source": "137872.png",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20,
+   28
+  ],
+  "note": ""
+ },
+ {
+  "path": "assets/games/finger_soccer/pitch.webp",
+  "size_px": [
+   1080,
+   1698
+  ],
+  "suggested_logical_dp": [
+   720,
+   1132
+  ],
+  "source": "generated",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Procedurally generated pitch. Covers x[-20,700], y[-66,1066] logical units of the game field (680x1000)."
+ },
+ {
+  "path": "assets/games/finger_soccer/ball.webp",
+  "size_px": [
+   256,
+   256
+  ],
+  "suggested_logical_dp": [
+   40,
+   40
+  ],
+  "source": "generated",
+  "category": "finger_soccer",
+  "used_in_steps": [
+   20
+  ],
+  "note": "Procedural ball placeholder; replace with art-directed ball."
+ }
+]

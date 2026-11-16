@@ -1,0 +1,32 @@
+name: NEXORA Quick Check
+on:
+  push:
+    branches: ['check-**']
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.1'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Analyze
+        run: |
+          set +e
+          flutter analyze --no-fatal-infos --no-fatal-warnings > analyze.txt 2>&1
+          echo "=====ANALYZE-BEGIN====="
+          grep -E "(error|warning) •" analyze.txt
+          echo "=====ANALYZE-END====="
+          exit 0
+      - name: Test
+        run: |
+          set +e
+          flutter test --reporter expanded > test.txt 2>&1
+          echo "=====TEST-BEGIN====="
+          grep -E "\[E\]|Error:|error:|Expected:|Actual:|FAILED|Some tests failed|All tests passed|Failed to load" test.txt | head -300
+          echo "=====TEST-END====="
+          exit 0

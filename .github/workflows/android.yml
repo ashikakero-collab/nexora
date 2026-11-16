@@ -1,0 +1,219 @@
+name: NEXORA Android Build
+
+on:
+  push:
+    branches: ['online-redesign']
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  # Release published by every successful push of online-redesign (bump for each milestone).
+  RELEASE_TAG: redesign-v1
+  # Public values only (the anon/publishable key is designed to ship inside the app; RLS protects the data).
+  SUPABASE_URL: https://eisstodgncimypdawisy.supabase.co
+  SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpc3N0b2RnbmNpbXlwZGF3aXN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyMjkwMTAsImV4cCI6MjEwOTgwNTAxMH0.uEPldAQjJdRyZTGXaz_OpFR7WpFXMiPXlW1S34cR3p8
+  LIVEKIT_URL: wss://nexora-space-xzjzlfyl.livekit.cloud
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.1'
+          channel: stable
+          cache: true
+
+      # Same signing key on every build so a new APK installs over the previous one.
+      - name: Restore signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: nxg-signing-key-v1
+
+      - name: Create signing key (first run only)
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey \
+              -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=NEXORA,O=NEXORA,C=US"
+          fi
+
+      - name: Generate Android platform (if missing)
+        run: |
+          if [ ! -d android ]; then
+            flutter create --platforms=android --org com.nexora --project-name nexora .
+          fi
+          M=android/app/src/main/AndroidManifest.xml
+          # Branding: app name + launcher icon
+          sed -i 's/android:label="[^"]*"/android:label="NEXORA"/' $M
+          for d in branding/mipmap-*; do
+            cp "$d/ic_launcher.png" "android/app/src/main/res/$(basename $d)/ic_launcher.png"
+          done
+          # Online: network + voice/video call permissions
+          if ! grep -q "android.permission.INTERNET" $M; then
+            sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <uses-permission android:name="android.permission.CAMERA"/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>\n    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>\n    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>\n    <uses-permission android:name="android.permission.WAKE_LOCK"/>\n    <uses-feature android:name="android.hardware.camera" android:required="false"/>\n    <application#' $M
+          fi
+          # Tournaments: device notifications (flutter_local_notifications needs core library desugaring,
+          # its receivers for scheduled reminders, POST_NOTIFICATIONS) + deep link nexora://t/<code>.
+          python3 - <<'PY'
+          import glob, re
+          for f in glob.glob('android/app/build.gradle*'):
+              s = open(f).read()
+              if 'coreLibraryDesugaring' in s:
+                  continue
+              kts = f.endswith('.kts')
+              flag = 'isCoreLibraryDesugaringEnabled = true' if kts else 'coreLibraryDesugaringEnabled true'
+              s = re.sub(r'compileOptions\s*\{', 'compileOptions {\n        ' + flag, s, count=1)
+              dep = ('coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")' if kts
+                     else "coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'")
+              s += '\ndependencies {\n    ' + dep + '\n}\n'
+              open(f, 'w').write(s)
+              print('desugaring enabled in', f)
+          m = 'android/app/src/main/AndroidManifest.xml'
+          s = open(m).read()
+          if 'POST_NOTIFICATIONS' not in s:
+              s = s.replace('<application', '<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n'
+                            '    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <application', 1)
+          if 'ScheduledNotificationReceiver' not in s:
+              s = s.replace('</application>',
+                  '    <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />\n'
+                  '        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">\n'
+                  '            <intent-filter>\n'
+                  '                <action android:name="android.intent.action.BOOT_COMPLETED"/>\n'
+                  '                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>\n'
+                  '                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>\n'
+                  '            </intent-filter>\n'
+                  '        </receiver>\n'
+                  '    </application>', 1)
+          if 'android:scheme="nexora"' not in s:
+              s = s.replace('</activity>',
+                  '    <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />\n'
+                  '            <intent-filter>\n'
+                  '                <action android:name="android.intent.action.VIEW" />\n'
+                  '                <category android:name="android.intent.category.DEFAULT" />\n'
+                  '                <category android:name="android.intent.category.BROWSABLE" />\n'
+                  '                <data android:scheme="nexora" android:host="t" />\n'
+                  '            </intent-filter>\n'
+                  '        </activity>', 1)
+          open(m, 'w').write(s)
+          PY
+          cat > android/app/proguard-rules.pro <<'PRO'
+          -keep class org.webrtc.** { *; }
+          -keep class io.livekit.** { *; }
+          -keep class com.cloudwebrtc.webrtc.** { *; }
+          -dontwarn org.webrtc.**
+          PRO
+          sed -i 's/^ *//' android/app/proguard-rules.pro
+          # minSdk 24 (P03)
+          if grep -q "minSdk = flutter.minSdkVersion" android/app/build.gradle* 2>/dev/null; then
+            sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' android/app/build.gradle*
+          fi
+          if grep -q "minSdkVersion flutter.minSdkVersion" android/app/build.gradle 2>/dev/null; then
+            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/' android/app/build.gradle
+          fi
+          head -20 $M
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Analyze
+        run: |
+          set -o pipefail
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze.txt
+
+      - name: Tests
+        run: |
+          set -o pipefail
+          flutter test --reporter expanded 2>&1 | tee test.txt
+
+      - name: Build split-per-ABI release APKs
+        run: |
+          set -o pipefail
+          flutter build apk --release --split-per-abi \
+            --build-number=${{ github.run_number }} \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=LIVEKIT_URL=$LIVEKIT_URL 2>&1 | tee build-apk.txt
+
+      - name: Build universal release APK
+        run: |
+          set -o pipefail
+          flutter build apk --release \
+            --build-number=${{ github.run_number }} \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=LIVEKIT_URL=$LIVEKIT_URL 2>&1 | tee -a build-apk.txt
+
+      - name: Package release files
+        run: |
+          mkdir -p out
+          D=build/app/outputs/flutter-apk
+          cp $D/app-arm64-v8a-release.apk out/NEXORA-redesign-arm64-v8a.apk
+          cp $D/app-armeabi-v7a-release.apk out/NEXORA-redesign-armeabi-v7a.apk
+          cp $D/app-x86_64-release.apk out/NEXORA-redesign-x86_64.apk
+          cp $D/app-release.apk out/NEXORA-redesign-universal.apk
+          ls -l out
+
+      - name: Verify installable release outputs
+        run: |
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)
+          AAPT=$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -n 1)
+          for f in out/*.apk; do
+            test -s "$f"
+            "$APKSIGNER" verify "$f"
+          done
+          "$AAPT" dump badging out/NEXORA-redesign-universal.apk | grep -F "package: name='com.nexora.nexora'"
+
+      - name: Upload release files
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEXORA-redesign-apks
+          path: out/*
+          retention-days: 30
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: NEXORA ${{ env.RELEASE_TAG }} (build ${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          body: |
+            NEXORA online-redesign build #${{ github.run_number }} from ${{ github.sha }}.
+            Install NEXORA-redesign-arm64-v8a.apk on most phones (armeabi-v7a for older 32-bit phones), or the universal APK.
+            Signed with the CI install key (not a Play Store upload key).
+          prerelease: false
+          make_latest: true
+          files: |
+            out/*.apk
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            analyze.txt
+            test.txt
+            build-apk.txt
+          retention-days: 14
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### NEXORA ${RELEASE_TAG} build #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          ls -l out >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
