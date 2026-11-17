@@ -117,25 +117,6 @@ class SettingsPage extends ConsumerWidget {
               showSelectedIcon: false,
             ),
           ),
-          _section(context, context.tx('سفر اول', 'The First Journey')),
-          GlassPanel(
-            child: Column(children: [
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.movie_filter_rounded,
-                    color: NxColors.violet),
-                title: Text(context.tx('پخش کامل سفر', 'Replay full journey')),
-                onTap: () => context.go('/journey'),
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.fast_forward_rounded,
-                    color: NxColors.turquoise),
-                title: Text(context.tx('نسخه‌ی کوتاه سفر', 'Short journey')),
-                onTap: () => context.go('/journey?mode=short'),
-              ),
-            ]),
-          ),
           _section(context, context.tx('حساب و داده', 'Account & data')),
           GlassPanel(
             child:

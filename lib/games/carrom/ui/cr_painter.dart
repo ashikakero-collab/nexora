@@ -11,6 +11,10 @@ import 'cr_controller.dart';
 /// Decoded artwork (null -> procedural fallback).
 class CrImages {
   ui.Image? board;
+
+  /// Pocket centres of the board art as fractions of the image (left x, top y, right x,
+  /// bottom y). When set, the art is fitted so its pockets sit exactly on the physics pockets.
+  List<double>? boardPockets;
   ui.Image? white;
   ui.Image? black;
   ui.Image? queen;
@@ -79,10 +83,22 @@ class CrPainter extends CustomPainter {
     const full = Rect.fromLTWH(0, 0, CrConfig.boardSize, CrConfig.boardSize);
     final img = images.board;
     if (img != null) {
+      final List<double>? pk = images.boardPockets;
+      Rect dst = full;
+      if (pk != null && pk.length == 4) {
+        final List<double> a = CrConfig.pockets.first;
+        final List<double> b = CrConfig.pockets.last;
+        final double w = (b[0] - a[0]) / (pk[2] - pk[0]);
+        final double h = (b[1] - a[1]) / (pk[3] - pk[1]);
+        dst = Rect.fromLTWH(a[0] - pk[0] * w, a[1] - pk[1] * h, w, h);
+        canvas.drawRRect(
+            RRect.fromRectAndRadius(full, const Radius.circular(40)),
+            Paint()..color = const Color(0xFF0B0716));
+      }
       canvas.drawImageRect(
           img,
           Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble()),
-          full,
+          dst,
           _imgPaint);
     } else {
       _drawProceduralBoard(canvas);
@@ -473,3 +489,27 @@ class CrPainter extends CustomPainter {
       oldDelegate.accentSecondary != accentSecondary ||
       oldDelegate.error != error;
 }
+
+/// Carrom table art (NX2 boards from the owner's art) and where their pockets are.
+class CrBoardSkin {
+  const CrBoardSkin(this.asset, this.pockets, this.nameFa, this.nameEn);
+  final String asset;
+  final List<double>? pockets;
+  final String nameFa;
+  final String nameEn;
+}
+
+const List<CrBoardSkin> kCrBoardSkins = <CrBoardSkin>[
+  CrBoardSkin('assets/ui/nx2/boards/carrom_wood.webp',
+      <double>[0.0741, 0.0795, 0.9200, 0.9179], 'چوبی', 'Wood'),
+  CrBoardSkin('assets/ui/nx2/boards/carrom_green.webp',
+      <double>[0.1015, 0.1055, 0.9157, 0.9203], 'مشکی سبز', 'Black & green'),
+  CrBoardSkin('assets/ui/nx2/boards/carrom_silver.webp',
+      <double>[0.0782, 0.0989, 0.8998, 0.8915], 'نقره‌ای', 'Silver'),
+  CrBoardSkin('assets/games/carrom/board_nx_black_gold.webp', null,
+      'مشکی طلایی', 'Black & gold'),
+];
+
+CrBoardSkin crBoardSkin(int i) =>
+    kCrBoardSkins[(i % kCrBoardSkins.length + kCrBoardSkins.length) %
+        kCrBoardSkins.length];

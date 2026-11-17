@@ -30,6 +30,26 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: ChakraPetch
+      fonts:
+        - asset: assets/fonts/ChakraPetch-Regular.ttf
+        - asset: assets/fonts/ChakraPetch-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/ChakraPetch-Bold.ttf
+          weight: 700
+    - family: Estedad
+      fonts:
+        - asset: assets/fonts/Estedad-Regular.ttf
+        - asset: assets/fonts/Estedad-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Estedad-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Estedad-Black.ttf
+          weight: 900
+    - family: Lalezar
+      fonts:
+        - asset: assets/fonts/Lalezar-Regular.ttf
   assets:
     - assets/arcade/pedestals/
     - assets/avatar/gear/
@@ -61,7 +81,6 @@ flutter:
     - assets/worlds/hub/portals/
     - assets/worlds/hub/props/
     - assets/worlds/hub/props/set/
-    - assets/worlds/hub/ship/
     - assets/worlds/personal_orbit/decor/
     - assets/media/
     - assets/ui/nx2/badges/

@@ -356,8 +356,6 @@ class AppAssets {
       'assets/worlds/hub/props/captain_chair_blue.webp';
   static const worldsHubPropsCaptainChairNavy =
       'assets/worlds/hub/props/captain_chair_navy.webp';
-  static const worldsHubPropsCommandDeskMain =
-      'assets/worlds/hub/props/command_desk_main.webp';
   static const worldsHubPropsCommandPlatformOctagon =
       'assets/worlds/hub/props/command_platform_octagon.webp';
   static const worldsHubPropsCommandPlatformWide =
@@ -390,8 +388,6 @@ class AppAssets {
       'assets/worlds/hub/props/set/robotic_seat.webp';
   static const worldsHubPropsSetServerRack =
       'assets/worlds/hub/props/set/server_rack.webp';
-  static const worldsHubShipNexoraCruiserNx01 =
-      'assets/worlds/hub/ship/nexora_cruiser_nx01.webp';
   static const worldsPersonalOrbitDecorBanner =
       'assets/worlds/personal_orbit/decor/banner.webp';
   static const worldsPersonalOrbitDecorCrystalArch =

@@ -710,3 +710,103 @@ class _SnlDiePainter extends CustomPainter {
       oldDelegate.blank != blank ||
       oldDelegate.glow != glow;
 }
+
+// ------------------------------------------------------------ NX2 dragon skin
+/// The owner's dragon board (assets/ui/nx2/boards/snakes_dragon.webp) used as the ornate frame. The art's own
+/// grid is drawn with 11 rows and repeated numbers, so the 10x10 squares are redrawn in code in the art's
+/// style (marble cells, gold rims, gold numerals) at exactly [SnlGeom.cell] positions.
+const String kSnlDragonAsset = 'assets/ui/nx2/boards/snakes_dragon.webp';
+
+/// Frame margins around the 10x10 grid, in cell units.
+const double kSnlFrameL = 0.55, kSnlFrameR = 0.55, kSnlFrameT = 1.35, kSnlFrameB = 1.75;
+
+class SnlDragonFramePainter extends CustomPainter {
+  SnlDragonFramePainter(this.img);
+  final ui.Image img;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // size covers the frame: grid origin at (kSnlFrameL, kSnlFrameT) cells.
+    final double u = size.width / (10 + kSnlFrameL + kSnlFrameR);
+    final double sx = img.width / 1020, sy = img.height / 1532; // art measured on the 1020x1532 original
+    final List<double> ax = <double>[0, 60 * sx, 960 * sx, img.width.toDouble()];
+    final List<double> dx = <double>[0, kSnlFrameL * u, (kSnlFrameL + 10) * u, size.width];
+    final List<double> ay = <double>[0, 248 * sy, 1328 * sy, img.height.toDouble()];
+    final List<double> dy = <double>[0, kSnlFrameT * u, (kSnlFrameT + 10) * u, size.height];
+    final Paint p = Paint()..filterQuality = FilterQuality.medium;
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (i == 1 && j == 1) continue; // grid area is redrawn below
+        canvas.drawImageRect(img, Rect.fromLTRB(ax[i], ay[j], ax[i + 1], ay[j + 1]),
+            Rect.fromLTRB(dx[i], dy[j], dx[i + 1] + 0.5, dy[j + 1] + 0.5), p);
+      }
+    }
+    // the art's grid texture, softly, under the new cells
+    canvas.drawImageRect(img, Rect.fromLTRB(ax[1], ay[1], ax[2], ay[2]),
+        Rect.fromLTRB(dx[1], dy[1], dx[2], dy[2]), p..color = const Color(0x55FFFFFF));
+  }
+
+  @override
+  bool shouldRepaint(covariant SnlDragonFramePainter old) => old.img != img;
+}
+
+/// Squares + numbers in the dragon-board style (grid space: 10 x [kSnlBoardRows] cells).
+class SnlDragonCellsPainter extends CustomPainter {
+  SnlDragonCellsPainter({required this.isFa});
+  final bool isFa;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double u = size.width / 10;
+    const Color gold = Color(0xFFF2B640);
+    for (int n = 1; n <= kSnlGoal; n++) {
+      final Rect r = Rect.fromCenter(center: SnlGeom.cell(n) * u, width: u, height: u).deflate(u * 0.045);
+      final RRect rr = RRect.fromRectAndRadius(r, Radius.circular(u * 0.16));
+      Color tint = const Color(0xFF3A1C66);
+      if (kSnlLadders.containsKey(n)) tint = const Color(0xFF1F4E7A);
+      if (kSnlSnakes.containsKey(n)) tint = const Color(0xFF6A1A4C);
+      if (n == kSnlGoal) tint = const Color(0xFF7A5512);
+      canvas.drawRRect(
+          rr,
+          Paint()
+            ..shader = ui.Gradient.radial(r.center, u * 0.7, <Color>[
+              Color.lerp(tint, Colors.white, 0.08)!.withValues(alpha: 0.92),
+              const Color(0xF0120A22),
+            ]));
+      canvas.drawRRect(
+          rr,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = u * 0.045
+            ..shader = ui.Gradient.linear(r.topLeft, r.bottomRight,
+                const <Color>[Color(0xFFFFE08A), Color(0xFFB0741C), Color(0xFFFFD36B)], const <double>[0, 0.5, 1]));
+      final TextPainter tp = TextPainter(
+        text: TextSpan(
+          text: snlNum(n, isFa),
+          style: TextStyle(
+            fontFamily: 'ChakraPetch',
+            fontFamilyFallback: const <String>['Estedad'],
+            color: gold,
+            fontSize: u * (n == kSnlGoal ? 0.3 : 0.27),
+            fontWeight: FontWeight.w900,
+            shadows: const <Shadow>[Shadow(color: Color(0xFF000000), blurRadius: 3, offset: Offset(0, 1))],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, r.center - Offset(tp.width / 2, tp.height / 2 + u * 0.06));
+      // little diamond under the number, as on the art
+      final Offset d = r.center + Offset(0, u * 0.24);
+      final Path dp = Path()
+        ..moveTo(d.dx, d.dy - u * 0.05)
+        ..lineTo(d.dx + u * 0.035, d.dy)
+        ..lineTo(d.dx, d.dy + u * 0.05)
+        ..lineTo(d.dx - u * 0.035, d.dy)
+        ..close();
+      canvas.drawPath(dp, Paint()..color = gold.withValues(alpha: 0.8));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant SnlDragonCellsPainter old) => old.isFa != isFa;
+}

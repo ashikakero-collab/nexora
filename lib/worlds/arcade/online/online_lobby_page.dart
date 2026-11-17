@@ -28,10 +28,13 @@ class _Seat {
 /// Online lobby for one game: quick match, private room by code, open rooms, invite friends.
 class OnlineLobbyPage extends ConsumerStatefulWidget {
   const OnlineLobbyPage(
-      {super.key, required this.gameId, this.joinCode, this.roomId});
+      {super.key, required this.gameId, this.joinCode, this.roomId, this.action});
   final String gameId;
   final String? joinCode;
   final String? roomId;
+
+  /// 'quick' runs matchmaking, 'create' makes a public room, right after sign-in (from the Rooms page).
+  final String? action;
 
   @override
   ConsumerState<OnlineLobbyPage> createState() => _OnlineLobbyPageState();
@@ -78,6 +81,10 @@ class _OnlineLobbyPageState extends ConsumerState<OnlineLobbyPage> {
     } else if (widget.joinCode != null && widget.joinCode!.isNotEmpty) {
       _code.text = widget.joinCode!;
       await _joinByCode();
+    } else if (widget.action == 'quick' && _c != null) {
+      await _quick();
+    } else if (widget.action == 'create' && _c != null) {
+      await _create(false);
     } else {
       await _loadOpen();
     }

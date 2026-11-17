@@ -46,8 +46,6 @@ class HubSearchDelegate extends SearchDelegate<void> {
           Icons.emoji_events_rounded,
           NxColors.gold,
           '/world/personal_orbit'),
-      _Hit(isFa ? 'تماشای سفر' : 'Watch the journey', 'THE FIRST JOURNEY',
-          Icons.movie_filter_rounded, NxColors.violet, '/journey'),
     ];
     return hits;
   }
@@ -133,11 +131,7 @@ class HubSearchDelegate extends SearchDelegate<void> {
                 size: 15, color: visual.muted),
             onTap: () {
               close(context, null);
-              if (h.route == '/journey') {
-                context.go(h.route);
-              } else {
-                context.push(h.route);
-              }
+              context.push(h.route);
             },
           ),
         );

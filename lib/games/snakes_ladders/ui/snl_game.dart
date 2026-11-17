@@ -1,6 +1,10 @@
 import 'dart:math';
 
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:nexora/core/storage/local_store.dart';
+import 'package:nexora/core/ui2/nx2_board_art.dart';
 import 'package:flutter/services.dart';
 import 'package:nexora/core/theme/nx_theme.dart';
 import 'package:nexora/games/core/game_contract.dart';
@@ -17,6 +21,13 @@ class SnlGame extends StatefulWidget {
 }
 
 class _SnlGameState extends State<SnlGame> with TickerProviderStateMixin {
+  /// 0 = NX2 dragon board, 1 = neon classic.
+  int _skin = (LocalStore.instance.getInt('snakes_ladders.board_skin') ?? 0) % 2;
+  void _nextSkin() {
+    setState(() => _skin = (_skin + 1) % 2);
+    LocalStore.instance.setInt('snakes_ladders.board_skin', _skin);
+  }
+
   late SnlEngine _engine;
   late AnimationController _rollCtl;
   late AnimationController _hopCtl;
@@ -609,8 +620,10 @@ class _SnlGameState extends State<SnlGame> with TickerProviderStateMixin {
         ),
       ));
     }
+    chips.add(Nx2BoardButton(onTap: _nextSkin, size: 30));
     return Wrap(
       alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       spacing: 6,
       runSpacing: 6,
       children: chips,
@@ -618,6 +631,35 @@ class _SnlGameState extends State<SnlGame> with TickerProviderStateMixin {
   }
 
   Widget _boardView() {
+    if (_skin == 0) {
+      const double fw = 10 + kSnlFrameL + kSnlFrameR, fh = 10 + kSnlFrameT + kSnlFrameB;
+      return AspectRatio(
+        aspectRatio: fw / fh,
+        child: LayoutBuilder(builder: (BuildContext context, BoxConstraints c) {
+          final double u = c.maxWidth / fw;
+          return Stack(children: <Widget>[
+            Positioned.fill(
+              child: Nx2ArtCanvas(
+                asset: kSnlDragonAsset,
+                size: Size(c.maxWidth, c.maxHeight),
+                painter: (ui.Image img) => SnlDragonFramePainter(img),
+              ),
+            ),
+            Positioned(
+              left: kSnlFrameL * u,
+              top: kSnlFrameT * u,
+              width: 10 * u,
+              height: kSnlBoardRows * u,
+              child: _boardCore(dragon: true),
+            ),
+          ]);
+        }),
+      );
+    }
+    return _boardCore(dragon: false);
+  }
+
+  Widget _boardCore({required bool dragon}) {
     return AspectRatio(
       aspectRatio: 10 / kSnlBoardRows,
       child: LayoutBuilder(
@@ -637,7 +679,9 @@ class _SnlGameState extends State<SnlGame> with TickerProviderStateMixin {
                 children: <Widget>[
                   Positioned.fill(
                     child: RepaintBoundary(
-                      child: CustomPaint(
+                      child: dragon
+                          ? CustomPaint(painter: SnlDragonCellsPainter(isFa: _l.isFa))
+                          : CustomPaint(
                         painter: SnlBoardPainter(
                             fancy: _fancy,
                             isFa: _l.isFa,

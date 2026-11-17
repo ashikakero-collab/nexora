@@ -9,6 +9,11 @@ import 'bm_data.dart';
 // ---------------------------------------------------------------- constants (game.js line 4-6)
 const double K = 1.27, PR = 63.8, BR = 28.8, STEP = 1 / 240, RC = 70, LMAX = 320;
 const int NB = 36;
+/// Mini-soccer tuning (redesign-v1.1, owner request): ball mass 1.9 -> 1.805 (x0.95) and a kick factor on the
+/// ball's share of a disc->ball impulse so a disc striking the ball launches it exactly 5% faster than before
+/// (the lighter mass alone gives +1.40%, BKICK supplies the rest). Nothing else changed.
+const double BALL_M = 1.805;
+const double BKICK = 1.05 * ((1 / 1.9) / (1 / 5 + 1 / 1.9)) / ((1 / BALL_M) / (1 / 5 + 1 / BALL_M));
 const double HV = 4, PF1 = 390, PF2 = .8, PV0 = 600, EPP = .48, PCAP = 190;
 
 /// Field size factor (game.js line 12).
@@ -273,7 +278,7 @@ class BmEngine {
         bodies.add(b);
       }
     }
-    final BmBody bl = mk(CX, mirror ? 2 * CY - KY : KY, 2, BR, 1.9);
+    final BmBody bl = mk(CX, mirror ? 2 * CY - KY : KY, 2, BR, BALL_M);
     bl.cid = 99;
     ball = bl;
     bodies.add(bl);
@@ -522,6 +527,17 @@ class BmEngine {
         j = -(1 + e) * vn / sm;
     final BmBody? pa = isB ? (a == bl ? b : a) : null;
     final double pre = pa != null ? math.sqrt(pa.vx * pa.vx + pa.vy * pa.vy) : 0;
+    if (pa != null) {
+      // disc strikes the ball (disc faster than ball): ball launch x1.05 overall (see BKICK).
+      final double bs = math.sqrt(bl.vx * bl.vx + bl.vy * bl.vy);
+      if (pre > bs) {
+        if (a == bl) {
+          ka *= BKICK;
+        } else {
+          kb *= BKICK;
+        }
+      }
+    }
     a.vx -= j * nx * a.im * ka;
     a.vy -= j * ny * a.im * ka;
     b.vx += j * nx * b.im * kb;

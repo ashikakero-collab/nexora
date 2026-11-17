@@ -431,15 +431,6 @@ class _MenuGrid extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.movie_filter_rounded),
-                  title:
-                      Text(ctx.tx('تماشای دوباره‌ی سفر', 'Replay the journey')),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    context.go('/journey');
-                  },
-                ),
-                ListTile(
                   leading: const Icon(Icons.info_outline_rounded),
                   title: Text(ctx.tx(
                       '${kGames.length} بازی · ${kWorlds.length} دنیا',

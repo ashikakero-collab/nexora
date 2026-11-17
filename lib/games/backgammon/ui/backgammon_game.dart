@@ -1,14 +1,16 @@
+import 'dart:ui' as ui;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nexora/core/assets/app_assets.dart';
 import 'package:nexora/core/theme/nx_theme.dart';
 import 'package:nexora/games/core/game_contract.dart';
 
 import '../core/backgammon_bot.dart';
 import '../core/backgammon_rules.dart';
 import 'bg_geometry.dart';
+import 'bg_skins.dart';
+import '../../../core/ui2/nx2_board_art.dart';
 import 'bg_widgets.dart';
 
 enum _Phase { opening, awaitRoll, rolling, playing, bot, gameOver }
@@ -23,6 +25,12 @@ class BackgammonGame extends StatefulWidget {
 
 class _BackgammonGameState extends State<BackgammonGame>
     with TickerProviderStateMixin {
+  int _skin = bgSkinIndex();
+  void _nextSkin() {
+    setState(() => _skin = (_skin + 1) % kBgSkins.length);
+    bgSetSkin(_skin);
+  }
+
   late BgState _s;
   late BgDice _dice;
   late BgBot _bot;
@@ -665,7 +673,9 @@ class _BackgammonGameState extends State<BackgammonGame>
     return Row(
       children: <Widget>[
         Expanded(child: _playerCard(0)),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
+        Nx2BoardButton(onTap: _nextSkin, size: 34),
+        const SizedBox(width: 6),
         Expanded(child: _playerCard(1)),
       ],
     );
@@ -760,13 +770,11 @@ class _BackgammonGameState extends State<BackgammonGame>
     }
     final List<Widget> layers = <Widget>[
       Positioned.fill(
-        child: Image.asset(
-          AppAssets.gamesBackgammonBoardNxGold,
-          fit: BoxFit.fill,
-          cacheWidth: 1536,
-          filterQuality: FilterQuality.medium,
-          errorBuilder: (BuildContext c, Object e, StackTrace? st) =>
-              const CustomPaint(painter: BgFallbackBoardPainter()),
+        child: Nx2ArtCanvas(
+          asset: kBgSkins[_skin].asset,
+          size: const Size(BgGeom.w, BgGeom.h),
+          painter: (ui.Image img) => BgSkinPainter(img, kBgSkins[_skin]),
+          fallback: const CustomPaint(painter: BgFallbackBoardPainter()),
         ),
       ),
       Positioned.fill(

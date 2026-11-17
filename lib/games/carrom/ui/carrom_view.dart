@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:nexora/core/assets/app_assets.dart';
+import 'package:nexora/core/storage/local_store.dart';
 import 'package:nexora/core/theme/nx_theme.dart';
 import 'package:nexora/games/core/game_contract.dart';
 import '../core/carrom_config.dart';
@@ -47,6 +48,14 @@ class _CarromViewState extends State<CarromView>
   late final Ticker _ticker;
   final CrImages _images = CrImages();
   Duration _last = Duration.zero;
+  int _skin = LocalStore.instance.getInt('carrom.board_skin') ?? 0;
+
+  /// Cycles the table art (wood → black/green → silver → classic), remembered on the device.
+  Future<void> _nextSkin() async {
+    _skin = (_skin + 1) % kCrBoardSkins.length;
+    await LocalStore.instance.setInt('carrom.board_skin', _skin);
+    await _loadImages();
+  }
 
   @override
   void initState() {
@@ -58,8 +67,8 @@ class _CarromViewState extends State<CarromView>
   }
 
   Future<void> _loadImages() async {
-    final board =
-        await crLoadImage(AppAssets.gamesCarromBoardNxBlackGold, 1024);
+    final CrBoardSkin skin = crBoardSkin(_skin);
+    final board = await crLoadImage(skin.asset, 1024);
     final white = await crLoadImage(AppAssets.gamesSharedDiscsDiscCream, 96);
     final black = await crLoadImage(AppAssets.gamesSharedDiscsDiscBlack, 96);
     final queen = await crLoadImage(AppAssets.disc('disc_red'), 96);
@@ -68,6 +77,7 @@ class _CarromViewState extends State<CarromView>
     if (!mounted) return;
     setState(() {
       _images.board = board;
+      _images.boardPockets = skin.pockets;
       _images.white = white;
       _images.black = black;
       _images.queen = queen;
@@ -172,6 +182,7 @@ class _CarromViewState extends State<CarromView>
                                     c: _c,
                                     launch: launch,
                                     onRules: _showRules,
+                                    onSkin: _nextSkin,
                                     theme: theme,
                                     error: scheme.error),
                       ),
@@ -260,12 +271,14 @@ class _CrHud extends StatelessWidget {
       required this.c,
       required this.launch,
       required this.onRules,
+      required this.onSkin,
       required this.theme,
       required this.error});
   final CrHudData hud;
   final CrController c;
   final GameLaunch launch;
   final VoidCallback onRules;
+  final VoidCallback onSkin;
   final NxThemeColors theme;
   final Color error;
   bool get _motion => launch.fancyEffects && !launch.reducedMotion;
@@ -427,6 +440,22 @@ class _CrHud extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            InkWell(
+              onTap: onSkin,
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: theme.border.withOpacity(0.85)),
+                  color: theme.accent.withOpacity(0.12),
+                ),
+                child: Icon(Icons.palette_rounded,
+                    size: 16, color: theme.accent),
               ),
             ),
             const SizedBox(width: 6),

@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import '../profile/profile_service.dart';
 import '../settings/app_settings.dart';
 import 'nx2_assets.dart';
-import 'oracle_mascot.dart';
 
 /// NX2 colour tokens: deep cosmic violet, neon magenta/cyan, gold for legendary.
 class Nx2 {
@@ -697,14 +696,17 @@ class Nx2SectionHeader extends StatelessWidget {
   }
 }
 
-/// Destinations of the bottom dock.
-enum Nx2Tab { home, games, oracle, chat, profile }
+/// Destinations of the bottom dock (+ home/profile, reached from the drawer and the top bar).
+enum Nx2Tab { home, social, oracle, games, shop, tournaments, rewards, profile }
 
 String nx2TabPath(Nx2Tab t) => switch (t) {
       Nx2Tab.home => '/hub',
-      Nx2Tab.games => '/world/nexora_arcade',
+      Nx2Tab.social => '/social',
       Nx2Tab.oracle => '/oracle',
-      Nx2Tab.chat => '/world/orbit_network',
+      Nx2Tab.games => '/rooms',
+      Nx2Tab.shop => '/world/nexora_exchange',
+      Nx2Tab.tournaments => '/tournaments',
+      Nx2Tab.rewards => '/rewards',
       Nx2Tab.profile => '/world/personal_orbit',
     };
 
@@ -721,7 +723,8 @@ void nx2GoTab(BuildContext context, Nx2Tab tab, Nx2Tab? current) {
   }
 }
 
-/// Bottom dock: four neon tabs and the raised ORACLE orb in the middle.
+/// Bottom dock: CHAT+MEDIA, ORACLE | big raised GAME button | SHOP, TOURNAMENTS, REWARDS & PACKS.
+/// The GAME button sits in the exact centre; each side shares its half of the bar.
 class Nx2Dock extends StatelessWidget {
   const Nx2Dock({super.key, required this.current});
   final Nx2Tab? current;
@@ -741,111 +744,110 @@ class Nx2Dock extends StatelessWidget {
             child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
               AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: on
-                      ? <BoxShadow>[
-                          BoxShadow(
-                              color: Nx2.cyan.withValues(alpha: 0.55),
-                              blurRadius: 16)
-                        ]
+                      ? <BoxShadow>[BoxShadow(color: Nx2.cyan.withValues(alpha: 0.55), blurRadius: 16)]
                       : const <BoxShadow>[],
                 ),
                 child: ShaderMask(
                   shaderCallback: (Rect r) => (on
-                          ? const LinearGradient(
-                              colors: <Color>[Nx2.cyan, Nx2.magenta])
-                          : const LinearGradient(
-                              colors: <Color>[Nx2.muted, Nx2.muted]))
+                          ? const LinearGradient(colors: <Color>[Nx2.cyan, Nx2.magenta])
+                          : const LinearGradient(colors: <Color>[Color(0xFFB9A8E8), Color(0xFF8C7BC4)]))
                       .createShader(r),
-                  child: Icon(icon, size: 24, color: Colors.white),
+                  child: Icon(icon, size: 23, color: Colors.white),
                 ),
               ),
               Text(context.tx(fa, en),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w800,
-                      color: on ? Nx2.text : Nx2.muted)),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: on ? Nx2.text : Nx2.muted)),
             ]),
           ),
         ),
       );
     }
 
+    const double center = 92;
+    final bool gameOn = current == Nx2Tab.games;
     return SizedBox(
-      height: 74 + bottom + 18,
+      height: 74 + bottom + 22,
       child: Stack(clipBehavior: Clip.none, children: <Widget>[
         Positioned(
-          left: 8,
-          right: 8,
-          bottom: bottom + 6,
-          height: 70,
-          child: CustomPaint(
-            painter: Nx2FramePainter(
-                cut: 18,
-                glow: 0.5,
-                gems: false,
-                fill: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: <Color>[Color(0xFF2A1468), Color(0xFF0C0529)])),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-              child: Row(children: <Widget>[
-                item(Nx2Tab.home, Icons.home_rounded, 'خانه', 'Home'),
-                item(Nx2Tab.games, Icons.sports_esports_rounded, 'بازی‌ها',
-                    'Games'),
-                const Expanded(child: SizedBox.shrink()),
-                item(Nx2Tab.chat, Icons.forum_rounded, 'پیام‌ها', 'Chat'),
-                item(Nx2Tab.profile, Icons.person_rounded, 'پروفایل',
-                    'Profile'),
-              ]),
+          left: 6,
+          right: 6,
+          bottom: bottom + 4,
+          height: 72,
+          child: Stack(fit: StackFit.expand, children: <Widget>[
+            Image.asset(Nx2Assets.framesDock,
+                fit: BoxFit.fill, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+            CustomPaint(
+              painter: Nx2FramePainter(
+                  cut: 18,
+                  glow: 0.5,
+                  gems: false,
+                  fill: const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: <Color>[Color(0xE02A1468), Color(0xF00C0529)])),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+                child: Row(children: <Widget>[
+                  Expanded(
+                    child: Row(children: <Widget>[
+                      item(Nx2Tab.social, Icons.perm_media_rounded, 'چت و رسانه', 'Chat+Media'),
+                      item(Nx2Tab.oracle, Icons.auto_awesome_rounded, 'اوراکل', 'ORACLE'),
+                    ]),
+                  ),
+                  const SizedBox(width: center - 8),
+                  Expanded(
+                    child: Row(children: <Widget>[
+                      item(Nx2Tab.shop, Icons.storefront_rounded, 'فروشگاه', 'Shop'),
+                      item(Nx2Tab.tournaments, Icons.emoji_events_rounded, 'تورنمنت', 'Tournaments'),
+                      item(Nx2Tab.rewards, Icons.card_giftcard_rounded, 'جایزه و پک', 'Rewards'),
+                    ]),
+                  ),
+                ]),
+              ),
             ),
-          ),
+          ]),
         ),
         Positioned(
-          bottom: bottom + 22,
+          bottom: bottom + 26,
           left: 0,
           right: 0,
           child: Center(
             child: _Pressable(
-              onTap: () => nx2GoTab(context, Nx2Tab.oracle, current),
+              onTap: () => nx2GoTab(context, Nx2Tab.games, current),
               child: Semantics(
                 button: true,
-                label: 'ORACLE',
+                label: context.tx('بازی‌ها', 'GAMES'),
                 child: SizedBox(
-                  width: 82,
-                  height: 82,
+                  width: center,
+                  height: center,
                   child: Stack(alignment: Alignment.center, children: <Widget>[
                     Container(
-                      width: 62,
-                      height: 62,
+                      width: 70,
+                      height: 70,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: const RadialGradient(colors: <Color>[
-                          Color(0xFF3A1C9A),
-                          Color(0xFF0D0630)
-                        ]),
+                        gradient: const RadialGradient(colors: <Color>[Color(0xFF7B3CFF), Color(0xFF1A0A4A)]),
                         boxShadow: <BoxShadow>[
-                          BoxShadow(
-                              color: (current == Nx2Tab.oracle
-                                      ? Nx2.cyan
-                                      : Nx2.violet)
-                                  .withValues(alpha: 0.7),
-                              blurRadius: 20),
+                          BoxShadow(color: (gameOn ? Nx2.cyan : Nx2.magenta).withValues(alpha: 0.75), blurRadius: 24),
                         ],
                       ),
                     ),
                     Image.asset(Nx2Assets.framesRingGold,
-                        width: 82,
-                        height: 82,
-                        cacheWidth: 240,
-                        errorBuilder: (_, __, ___) => const SizedBox.shrink()),
-                    const OracleMascot(
-                        size: 46, mood: OracleMood.happy, interactive: false),
+                        width: center, height: center, cacheWidth: 260, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                      const Icon(Icons.sports_esports_rounded, size: 34, color: Colors.white,
+                          shadows: <Shadow>[Shadow(color: Nx2.cyan, blurRadius: 12)]),
+                      Text(context.tx('بازی', 'GAME'),
+                          style: const TextStyle(
+                              fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Colors.white)),
+                    ]),
                   ]),
                 ),
               ),
@@ -966,6 +968,36 @@ class Nx2Bubble extends StatelessWidget {
         child: Text(text,
             style: const TextStyle(
                 fontSize: 12.5, height: 1.35, color: Nx2.text)),
+      ),
+    );
+  }
+}
+
+/// Neon segmented tabs bound to the nearest DefaultTabController.
+class Nx2SegmentTabs extends StatelessWidget {
+  const Nx2SegmentTabs({super.key, required this.labels});
+  final List<String> labels;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xCC140A36),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Nx2.cyan.withValues(alpha: 0.45)),
+      ),
+      child: TabBar(
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          gradient: const LinearGradient(colors: <Color>[Color(0xFF7B3CFF), Color(0xFFE040C8)]),
+        ),
+        labelColor: Colors.white,
+        unselectedLabelColor: Nx2.muted,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5),
+        tabs: <Widget>[for (final String l in labels) Tab(height: 36, text: l)],
       ),
     );
   }

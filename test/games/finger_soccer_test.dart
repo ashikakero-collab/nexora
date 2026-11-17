@@ -53,7 +53,7 @@ void main() {
     e.startMatch(_cfg());
     expect(e.bodies.length, 11);
     expect(e.ball!.r, BR);
-    expect(e.ball!.m, 1.9);
+    expect(e.ball!.m, closeTo(1.805, 1e-9));
     expect(e.bodies.first.m, 5);
     expect(e.GOALS[0].x2 - e.GOALS[0].x1, 338);
   });

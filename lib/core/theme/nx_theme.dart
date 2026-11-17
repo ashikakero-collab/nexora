@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../ui2/page_turn.dart';
+
 /// NEXORA design tokens. Legacy gameplay colors remain stable; the app chrome
 /// reads [NxThemeColors] from the active theme instead.
 class NxColors {
@@ -211,6 +213,13 @@ ThemeData _buildTheme(NxThemeColors visual) {
       useMaterial3: true, colorScheme: scheme, brightness: Brightness.dark);
   return base.copyWith(
     extensions: <ThemeExtension<dynamic>>[visual],
+    pageTransitionsTheme: const PageTransitionsTheme(builders: <TargetPlatform, PageTransitionsBuilder>{
+      TargetPlatform.android: NxPageTurnTransitionsBuilder(),
+      TargetPlatform.iOS: NxPageTurnTransitionsBuilder(),
+      TargetPlatform.linux: NxPageTurnTransitionsBuilder(),
+      TargetPlatform.macOS: NxPageTurnTransitionsBuilder(),
+      TargetPlatform.windows: NxPageTurnTransitionsBuilder(),
+    }),
     scaffoldBackgroundColor: visual.background,
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -218,13 +227,15 @@ ThemeData _buildTheme(NxThemeColors visual) {
       centerTitle: false,
       foregroundColor: visual.text,
       titleTextStyle: TextStyle(
+          fontFamily: kNxFontHead,
+          fontFamilyFallback: kNxFontHeadFallback,
           fontSize: 18,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.7,
           color: visual.text),
     ),
-    textTheme:
-        base.textTheme.apply(bodyColor: visual.text, displayColor: visual.text),
+    textTheme: nxGameTextTheme(base.textTheme)
+        .apply(bodyColor: visual.text, displayColor: visual.text),
     iconTheme: IconThemeData(color: visual.text),
     cardTheme: CardThemeData(
       color: visual.surface,
@@ -320,5 +331,35 @@ ThemeData _buildTheme(NxThemeColors visual) {
       thumbColor: Colors.white,
       inactiveTrackColor: const Color(0x33FFFFFF),
     ),
+  );
+}
+
+
+// ------------------------------------------------------------------ fonts (bundled, OFL)
+/// Latin + digits: Chakra Petch (HUD/game look). Persian falls back to Estedad (body) or Lalezar (headings).
+const String kNxFont = 'ChakraPetch';
+const List<String> kNxFontFallback = <String>['Estedad'];
+const String kNxFontHead = 'ChakraPetch';
+const List<String> kNxFontHeadFallback = <String>['Lalezar', 'Estedad'];
+
+TextTheme nxGameTextTheme(TextTheme t) {
+  TextStyle? body(TextStyle? s) => s?.copyWith(fontFamily: kNxFont, fontFamilyFallback: kNxFontFallback);
+  TextStyle? head(TextStyle? s) => s?.copyWith(fontFamily: kNxFontHead, fontFamilyFallback: kNxFontHeadFallback);
+  return t.copyWith(
+    displayLarge: head(t.displayLarge),
+    displayMedium: head(t.displayMedium),
+    displaySmall: head(t.displaySmall),
+    headlineLarge: head(t.headlineLarge),
+    headlineMedium: head(t.headlineMedium),
+    headlineSmall: head(t.headlineSmall),
+    titleLarge: head(t.titleLarge),
+    titleMedium: body(t.titleMedium),
+    titleSmall: body(t.titleSmall),
+    bodyLarge: body(t.bodyLarge),
+    bodyMedium: body(t.bodyMedium),
+    bodySmall: body(t.bodySmall),
+    labelLarge: body(t.labelLarge),
+    labelMedium: body(t.labelMedium),
+    labelSmall: body(t.labelSmall),
   );
 }

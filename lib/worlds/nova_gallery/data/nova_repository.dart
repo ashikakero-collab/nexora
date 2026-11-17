@@ -2,7 +2,6 @@ import 'dart:math';
 
 import '../../../core/storage/local_store.dart';
 import '../models/nova_models.dart';
-import 'nova_seed.dart';
 
 /// Data access for NOVA GALLERY. The UI only talks to this interface, so an
 /// online (Supabase) implementation can be swapped in later.
@@ -65,20 +64,18 @@ class LocalNovaRepository implements NovaRepository {
 
   String _id(String prefix) => '${prefix}_${_clock().microsecondsSinceEpoch}_${_rng.nextInt(999999)}';
 
+  /// redesign-v1.1: no placeholder content. Older builds seeded "NEXORA Official" tip posts and a welcome
+  /// notification on the device; they are removed once here. Only real posts remain.
+  static const String kPurged = 'nova.official_purged.v2';
   Future<void> _ensureSeeded() async {
-    if (_store.getBool(kSeeded) == true) return;
-    final now = _clock();
-    final existing = _readPosts();
-    final seed = buildOfficialSeed(now);
-    final ids = existing.map((NovaPost p) => p.id).toSet();
-    for (final p in seed) {
-      if (!ids.contains(p.id)) existing.add(p);
-    }
+    if (_store.getBool(kPurged) == true) return;
+    final existing = _readPosts()..removeWhere((NovaPost p) => p.authorId == kNovaOfficialId);
     _posts = existing;
     await _writePosts();
-    final notifs = _readNotifs()..insert(0, buildWelcomeNotification(now));
+    final notifs = _readNotifs()..removeWhere((NovaNotification n) => n.id == 'notif_welcome');
     await _writeNotifs(notifs);
     await _store.setBool(kSeeded, true);
+    await _store.setBool(kPurged, true);
   }
 
   List<NovaPost> _readPosts() {

@@ -1,10 +1,10 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
-import '../../../core/assets/app_assets.dart';
 import '../../../core/theme/nx_theme.dart';
 import '../../core/game_contract.dart';
 import '../core/pool_bot.dart';
@@ -14,6 +14,8 @@ import '../core/pool_physics.dart';
 import 'pool_hud.dart';
 import 'pool_painter.dart';
 import 'pool_scene.dart';
+import 'pool_skins.dart';
+import '../../../core/ui2/nx2_board_art.dart';
 
 enum _Stage { aiming, striking, rolling, over }
 
@@ -32,6 +34,12 @@ class BilliardsGame extends StatefulWidget {
 class _BilliardsGameState extends State<BilliardsGame>
     with SingleTickerProviderStateMixin {
   NxThemeColors _theme = NxThemeColors.gold;
+  int _skin = poolSkinIndex();
+
+  void _nextSkin() {
+    setState(() => _skin = (_skin + 1) % kPoolSkins.length);
+    poolSetSkin(_skin);
+  }
   Color get _p0Color => _theme.accent;
   Color get _p1Color => _theme.accentSecondary;
 
@@ -791,7 +799,6 @@ class _BilliardsGameState extends State<BilliardsGame>
             final double tw = PoolConfig.artW * s, th = PoolConfig.artH * s;
             final double left = (box.maxWidth - tw) / 2;
             final double top = topH + math.max(0.0, (availH - th) / 2);
-            final double dpr = MediaQuery.of(context).devicePixelRatio;
             return Stack(
               children: <Widget>[
                 Positioned(
@@ -815,16 +822,12 @@ class _BilliardsGameState extends State<BilliardsGame>
                     child: Stack(
                       fit: StackFit.expand,
                       children: <Widget>[
-                        Image.asset(
-                          AppAssets.gamesBilliardsTableGreen,
-                          fit: BoxFit.fill,
-                          cacheWidth: math.max(64, (tw * dpr).round()),
-                          filterQuality: FilterQuality.medium,
-                          errorBuilder:
-                              (BuildContext c, Object e, StackTrace? st) =>
-                                  CustomPaint(
-                                      painter: PoolTableFallbackPainter(
-                                          accent: _theme.accent)),
+                        Nx2ArtCanvas(
+                          asset: kPoolSkins[_skin].asset,
+                          size: Size(tw, th),
+                          painter: (ui.Image img) => PoolSkinPainter(img, kPoolSkins[_skin]),
+                          fallback: CustomPaint(
+                              painter: PoolTableFallbackPainter(accent: _theme.accent)),
                         ),
                         RepaintBoundary(
                           child: CustomPaint(
@@ -912,8 +915,8 @@ class _BilliardsGameState extends State<BilliardsGame>
             width: 44,
             child: Column(
               children: <Widget>[
-                const SizedBox(height: 10),
-                const PoolMiniBall(id: 8, size: 24),
+                const SizedBox(height: 2),
+                const PoolMiniBall(id: 8, size: 22),
                 const SizedBox(height: 4),
                 Text(
                   _isBotTurn &&
@@ -926,6 +929,8 @@ class _BilliardsGameState extends State<BilliardsGame>
                       fontSize: 11,
                       fontWeight: FontWeight.w900),
                 ),
+                const SizedBox(height: 4),
+                Nx2BoardButton(onTap: _nextSkin, color: kPoolSkins[_skin].glow),
               ],
             ),
           ),
